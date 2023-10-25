@@ -1,0 +1,27 @@
+XXX
+	ETAPA 1 - Compiladores - 2019/1 Turma A - Prof. Marcelo Johann
+	Alunos:
+		Guilherme Haetinger e Lucas Alegre 
+
+XXX
+
+ZZ comentario de uma "" linha
+
+byte b = A;
+int abc__123 = OA;
+float 123 = OA.ABC;
+
+if(abc__123 == OA) then
+	print("HE SAID \"AAAAAAAAAA!!\"\n");
+else
+	print("\"AAAA!!\" - he said");
+
+loop(123 <= AAA or (123 >= ABB and 123 != O) or not(23 == ABC))
+{
+	read("what did he say? \n", &b);
+	leap(ID);
+}
+
+%@ ZZ dois erros aqui
+
+return 'a';
