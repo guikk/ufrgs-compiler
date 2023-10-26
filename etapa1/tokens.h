@@ -2,7 +2,9 @@
 #define TOKENS_H
 
 /*
- * Compiladores - etapa1 - tokens.h - semestre 2023/2 - Guilherme Klein Kern
+ * Etapa 1 - tokens.h
+ * INF-UFRGS - INF01147 Compiladores - 2023/2
+ * Guilherme Klein Kern
  */
 
 #define KW_CHAR           256
