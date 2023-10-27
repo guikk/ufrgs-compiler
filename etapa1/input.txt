@@ -1,27 +1,22 @@
-XXX
-	ETAPA 1 - Compiladores - 2019/1 Turma A - Prof. Marcelo Johann
-	Alunos:
-		Guilherme Haetinger e Lucas Alegre 
+char int float
+code
+if else while input print return
 
-XXX
+, ; ( ) [ ] { } = + - * / % < > & | ~
 
-ZZ comentario de uma "" linha
+x y1 1z _ 3_ _3 ifi if2 3int
 
-byte b = A;
-int abc__123 = OA;
-float 123 = OA.ABC;
+1 2 123 321
+'a' 'X' '-' '\n' '\b' '\'' '\"' '\\'
+2.5
+"meu nome" "Mensagem!"
 
-if(abc__123 == OA) then
-	print("HE SAID \"AAAAAAAAAA!!\"\n");
-else
-	print("\"AAAA!!\" - he said");
+/// 
+Multi line comment
+\\\
 
-loop(123 <= AAA or (123 >= ABB and 123 != O) or not(23 == ABC))
-{
-	read("what did he say? \n", &b);
-	leap(ID);
-}
+// Single line comment
 
-%@ ZZ dois erros aqui
+                                  
 
-return 'a';
+$#!@
