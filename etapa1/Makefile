@@ -1,8 +1,8 @@
-/*
- * Etapa 1 - Makefile
- * INF-UFRGS - INF01147 Compiladores - 2023/2
- * Guilherme Klein Kern
- */
+#
+# Etapa 1 - Makefile
+# INF-UFRGS - INF01147 Compiladores - 2023/2
+# Guilherme Klein Kern
+#
 
 all: build
 
