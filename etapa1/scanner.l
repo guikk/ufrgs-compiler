@@ -3,7 +3,7 @@
 #include "hash.h"
 
 /*
-* Etapa 1 - tokens.h
+* Etapa 1 - scanner.l
 * INF-UFRGS - INF01147 Compiladores - 2023/2
 * Guilherme Klein Kern
 */
