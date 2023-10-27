@@ -10,7 +10,7 @@ lexer:
 	@flex --header-file=lex.yy.h scanner.l 
 
 compile:
-	@./etapa1 $(filename)
+	@./etapa1 $(target)
 
 clean:
 	@rm -f *.o lex.yy.* etapa1

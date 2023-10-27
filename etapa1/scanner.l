@@ -1,6 +1,6 @@
 %{
 #include "tokens.h"
-//#include "hash.h"
+#include "hash.h"
 
 /*
 * Etapa 1 - tokens.h
@@ -43,27 +43,27 @@ return     {return KW_RETURN;}
 "!="         {return OPERATOR_DIF;}
 
 {number}	{
-				//hashInsert(LIT_INT, yytext);
+				add_symbol(LIT_INT, yytext);
 				return LIT_INT;
 			}
 
 [0-9a-z_]+  {
-				//hashInsert(TK_IDENTIFIER, yytext);
+				add_symbol(TK_IDENTIFIER, yytext);
 				return TK_IDENTIFIER;
 			}
 
 {number}\.{digit}+ 	{
-						//hashInsert(LIT_FLOAT, yytext);
+						add_symbol(LIT_FLOAT, yytext);
 						return LIT_FLOAT;
 					}
 
 '({escape}|[^\"'\\])'   {
-							//hashInsert(LIT_CHAR, yytext);
+							add_symbol(LIT_CHAR, yytext);
 							return LIT_CHAR;
 						}
 		
 \"({escape}|[^"])*\"    {
-							//hashInsert(LIT_STRING, yytext);
+							add_symbol(LIT_STRING, yytext);
 							return LIT_STRING;
 						}
 
@@ -82,7 +82,7 @@ return     {return KW_RETURN;}
 %%
 
 void initMe(void) {
-	//hashInit();
+	init_symbol_table();
 }
 
 int getLineNumber(void) {

@@ -15,17 +15,14 @@ typedef struct hash_node{
     struct hash_node* next;
 } hash_node;
 
-hash_node* Table[HASH_SIZE];
+int hash(char *text);
 
+hash_node* add_symbol(int type, char* text);
 
-void hashInit(void);
+hash_node* get_symbol(char *text);
 
-hash_node* hashInsert(int type, char* text);
+void init_symbol_table(void);
 
-hash_node* hashFind(char *text);
-
-int hashAddress(char *text);
-
-void hashPrint(void);
+void print_symbol_table(void);
 
 #endif

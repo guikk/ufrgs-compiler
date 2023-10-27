@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "lex.yy.h"
 #include "tokens.h"
-//#include "hash.h"
+#include "hash.h"
 
 #define MAX_FILENAME_LEN 50
 #define ASCII_MIN 0
@@ -24,10 +24,9 @@ void initMe(void);
 int main(int argc, char** argv) {
 
 	int token;
-	// char[MAX_FILENAME_LEN+1] filename;
 
 	if (argc < 2) {
-		printf("compile: Missing input file.\n\nTry 'make compile filename=<filename>'\n");
+		printf("compile: Missing input file.\n\nTry 'make compile target=<filename>'\n");
 		exit(1);
     }
   	if (0 == (yyin = fopen(argv[1], "r"))) {
@@ -96,7 +95,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	//hashPrint();
+	print_symbol_table();
 
 	return 0;
 }

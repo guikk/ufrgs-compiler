@@ -1,48 +1,23 @@
-/* 
-	ETAPA 1 - Compiladores - 2019/1 Turma A - Prof. Marcelo Johann
-	Alunos:
-		Guilherme Haetinger e Lucas Alegre 
-*/
+/*
+ * Etapa 1 - main.c
+ * INF-UFRGS - INF01147 Compiladores - 2023/2
+ * Guilherme Klein Kern
+ */
 
-#include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "hash.h"
 
-void hashInit(void) {
+hash_node* m_symbol_table[HASH_SIZE];
+
+void init_symbol_table(void) {
     for(int i = 0; i < HASH_SIZE; i++) {
-        Table[i] = 0;
+        m_symbol_table[i] = 0;
     }
 }
 
-hash_node* hashInsert(int type, char* text) {
-    hash_node* newnode = hashFind(text);
-    if(newnode != NULL)
-        return newnode;
-
-    int address = hashAddress(text);
-    newnode = (hash_node*) calloc(1, sizeof(hash_node));
-    newnode->type = type;
-    newnode->text = calloc(strlen(text) + 1, sizeof(char));
-    strcpy(newnode->text, text);
-
-    newnode->next = Table[address];
-    Table[address] = newnode;
-
-    return newnode;
-}
-
-hash_node* hashFind(char *text) {
-    int address = hashAddress(text);
-    hash_node* node;
-    for(node = Table[address]; node != NULL; node = node->next) {
-        if(strcmp(text, node->text) == 0)
-            return node;
-    }
-    return NULL;
-}
-
-int hashAddress(char *text) {
+int hash(char *text) {
     int address = 1;
     for(int i = 0; i < strlen(text); i++) {
         address = (address * text[i]) % HASH_SIZE + 1;
@@ -50,13 +25,43 @@ int hashAddress(char *text) {
     return address - 1;
 }
 
-void hashPrint(void){
+hash_node* add_symbol(int type, char* text) {
+    hash_node* newnode = get_symbol(text);
+    if(newnode != NULL)
+        return newnode;
+
+    int address = hash(text);
+    newnode = (hash_node*) calloc(1, sizeof(hash_node));
+    newnode->type = type;
+    newnode->text = calloc(strlen(text)+1, sizeof(char));
+    strcpy(newnode->text, text);
+
+    newnode->next = m_symbol_table[address];
+    m_symbol_table[address] = newnode;
+
+    return newnode;
+}
+
+hash_node* get_symbol(char *text) {
+    int address = hash(text);
     hash_node* node;
-    for(int i = 0; i < HASH_SIZE; i++) {
-        if(Table[i] != NULL) {
-            for(node = Table[i]; node != NULL; node = node->next) {
-                printf("Table[%d] - type: %d text: %s\n", i, node->type, node->text);
+    for(node = m_symbol_table[address]; node != NULL; node = node->next) {
+        if(strcmp(text, node->text) == 0)
+            return node;
+    }
+    return NULL;
+}
+
+void print_symbol_table(void){
+    hash_node* node;
+    printf("\n--- Symbol Table ---\n");
+    for (int i = 0; i < HASH_SIZE; i++) {
+        if (m_symbol_table[i] != NULL) {
+            printf("Index %d = {", i);
+            for (node = m_symbol_table[i]; node != NULL; node = node->next) {
+                printf(" %s(%d)", node->text, node->type);
             }
+            printf(" }\n");
         }
     }
 }
