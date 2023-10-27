@@ -1,12 +1,16 @@
 all: build
 
-build:
-	gcc -c lex.yy.c
-	gcc -c main.c
-	gcc -c hash.c
-	gcc -o ufrgs-compiler lex.yy.o main.o hash.o
+build: lexer
+	@gcc -c lex.yy.c
+	@gcc -c main.c
+	@gcc -c hash.c
+	@gcc -o etapa1 lex.yy.o main.o hash.o
+
+lexer:
+	@flex --header-file=lex.yy.h scanner.l 
 
 compile:
-	./ufrgs-compiler $(filename)
+	@./etapa1 $(filename)
 
-clean: rm -rf *.o
+clean:
+	@rm -f *.o lex.yy.* etapa1
