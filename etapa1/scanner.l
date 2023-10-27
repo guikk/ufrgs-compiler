@@ -1,6 +1,6 @@
 %{
 #include "tokens.h"
-#include "hash.h"
+//#include "hash.h"
 
 /*
 * Etapa 1 - tokens.h
@@ -12,7 +12,13 @@ int m_is_running = 1;
 int m_curr_line = 1;
 %}
 
-%x COMMENT
+escape \\[bnrt'\"\\]
+number 0|([1-9][0-9]*)
+digit  [0-9]
+whitespace [ \t]
+
+%x SINGLE_COMMENT
+%x MULTI_COMMENT
 
 %%
 
@@ -36,45 +42,47 @@ return     {return KW_RETURN;}
 "=="         {return OPERATOR_EQ;}
 "!="         {return OPERATOR_DIF;}
 
-[A-IO]+	            {
-						hashInsert(LIT_INT, yytext);
-						return LIT_INT;
+{number}	{
+				//hashInsert(LIT_INT, yytext);
+				return LIT_INT;
+			}
+
+[0-9a-z_]+  {
+				//hashInsert(TK_IDENTIFIER, yytext);
+				return TK_IDENTIFIER;
+			}
+
+{number}\.{digit}+ 	{
+						//hashInsert(LIT_FLOAT, yytext);
+						return LIT_FLOAT;
 					}
 
-[0-9a-z_]+          {
-						hashInsert(TK_IDENTIFIER, yytext);
-						return TK_IDENTIFIER;
-					}
-
-[A-IO]+\.[A-IO]+ 	{
-						hashInsert(LIT_REAL, yytext);
-						return LIT_REAL;
-					}
-
-'.'                 {
-						hashInsert(LIT_CHAR, yytext);
-						return LIT_CHAR;
-					}
+'({escape}|[^\"'\\])'   {
+							//hashInsert(LIT_CHAR, yytext);
+							return LIT_CHAR;
+						}
 		
-\"(\\.|[^"])*\"     {
-						hashInsert(LIT_STRING, yytext);
-						return LIT_STRING;
-					}
+\"({escape}|[^"])*\"    {
+							//hashInsert(LIT_STRING, yytext);
+							return LIT_STRING;
+						}
 
-\n                          {m_curr_line++;}
-[ \t]
-ZZ.*
-XXX                         {BEGIN(COMMENT);}
-.                           {return TOKEN_ERROR;  }
+\n                  {m_curr_line++;}
+{whitespace}
+"//"			    {BEGIN(SINGLE_COMMENT);}
+"///"               {BEGIN(MULTI_COMMENT);}
+.                   {return TOKEN_ERROR;}
 
-<COMMENT>XXX                {BEGIN(INITIAL);}
-<COMMENT>.
-<COMMENT>\n                 {m_curr_line++;}
+<SINGLE_COMMENT>\n         {m_curr_line++;BEGIN(INITIAL);}
+<SINGLE_COMMENT>.
 
+<MULTI_COMMENT>\\\\\\      {BEGIN(INITIAL);}
+<MULTI_COMMENT>\n          {m_curr_line++;}
+<MULTI_COMMENT>.
 %%
 
 void initMe(void) {
-	hashInit();
+	//hashInit();
 }
 
 int getLineNumber(void) {
