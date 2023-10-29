@@ -1,18 +1,19 @@
 #
-# Etapa 1 - Makefile
+# Etapa 2 - Makefile
 # INF-UFRGS - INF01147 Compiladores - 2023/2
 # Guilherme Klein Kern
 #
 
-PHASE_NUM=1
+PHASE_NUM=2
 
 all: build
 
-build: lexer
-	@gcc -c lex.yy.c
+build: lexer parser
 	@gcc -c main.c
 	@gcc -c hash.c
-	@gcc -o etapa$(PHASE_NUM) lex.yy.o main.o hash.o
+	@gcc -c lex.yy.c
+	@gcc -c y.tab.c
+	@gcc -o etapa$(PHASE_NUM) main.o hash.o lex.yy.o y.tab.o
 
 deploy:
 	@tar cvzf etapa$(PHASE_NUM).tgz .
@@ -20,8 +21,11 @@ deploy:
 lexer:
 	@flex --header-file=lex.yy.h scanner.l 
 
+parser:
+	@yacc -d -v parser.y
+
 compile:
 	@./etapa$(PHASE_NUM) $(target)
 
 clean:
-	@rm -f *.o lex.yy.* etapa*
+	@rm -f *.o etapa* lex.yy.* y.tab.* y.output
