@@ -4,19 +4,24 @@
 # Guilherme Klein Kern
 #
 
+PHASE_NUM=1
+
 all: build
 
 build: lexer
 	@gcc -c lex.yy.c
 	@gcc -c main.c
 	@gcc -c hash.c
-	@gcc -o etapa1 lex.yy.o main.o hash.o
+	@gcc -o etapa$(PHASE_NUM) lex.yy.o main.o hash.o
+
+deploy:
+	@tar cvzf etapa$(PHASE_NUM).tgz .
 
 lexer:
 	@flex --header-file=lex.yy.h scanner.l 
 
 compile:
-	@./etapa1 $(target)
+	@./etapa$(PHASE_NUM) $(target)
 
 clean:
-	@rm -f *.o lex.yy.* etapa1
+	@rm -f *.o lex.yy.* etapa*
