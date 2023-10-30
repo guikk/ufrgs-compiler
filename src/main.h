@@ -22,4 +22,6 @@ int getLineNumber();
 int isRunning(void);
 void initMe(void);
 
+char* get_input_filename(void);
+
 #endif

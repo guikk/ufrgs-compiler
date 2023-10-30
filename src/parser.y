@@ -64,6 +64,6 @@ literal : LIT_CHAR
 %%
 
 int yyerror(char *err){
-	fprintf(stderr, "%d: Error %s\n", getLineNumber(), err);
+	fprintf(stderr, "%s:%d: %s\n", get_input_filename(), getLineNumber(), err);
 	exit(ERR_BAD_SYNTAX);
 }
