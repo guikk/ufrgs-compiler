@@ -3,7 +3,7 @@
 #include "hash.h"
 
 /*
-* Etapa 1 - scanner.l
+* Etapa 2 - lexer.l
 * INF-UFRGS - INF01147 Compiladores - 2023/2
 * Guilherme Klein Kern
 */
@@ -47,7 +47,7 @@ return     {return KW_RETURN;}
 				return LIT_INT;
 			}
 
-[0-9a-zA-Z_]+   {
+[{digit}a-zA-Z_]+   {
 					add_symbol(TK_IDENTIFIER, yytext);
 					return TK_IDENTIFIER;
 				}

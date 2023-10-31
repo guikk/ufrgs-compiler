@@ -37,29 +37,85 @@
 
 %%
 
-program : declaration_list
+program : decl_list func_impl_list
 		;
-
-declaration_list : declaration declaration_list
-		  		 |
-		  		 ;
-
-declaration : type TK_IDENTIFIER ';'
-			| type TK_IDENTIFIER assignment ';'
-			;
-
-assignment : '=' literal
 
 type : KW_CHAR
 	 | KW_FLOAT
 	 | KW_INT
 	 ;
 
-literal : LIT_CHAR
-		| LIT_FLOAT
-		| LIT_INT
-		| LIT_STRING
-		;
+typed_id : type TK_IDENTIFIER
+		 ;
+
+value : LIT_CHAR
+		   | LIT_FLOAT
+		   | LIT_INT
+		   ;
+
+decl_list : decl decl_list
+		  |
+		  ;
+
+decl : var_decl
+	 | vec_decl
+	 | func_decl
+	 ;
+
+var_decl : typed_id '=' value ';'
+		 ;
+
+vec_decl : typed_id '[' LIT_INT ']' vec_init ';'
+		 ;
+
+vec_init : value vec_init
+		 |
+		 ;
+
+func_decl : typed_id '(' ')' ';'
+		  | typed_id '(' param_list ')' ';'
+		  ;
+
+param_list : typed_id ',' param_list
+		   | typed_id
+		   ;
+
+func_impl_list : func_impl func_impl_list
+			   |
+			   ;
+
+func_impl : KW_CODE TK_IDENTIFIER scope
+		  ;
+
+scope : '{' statemet_list '}'
+
+statemet_list : statement statemet_list
+			  |
+			  ;
+
+statement : assignment
+		  | if_st
+		  | if_else_st
+		  | while_st
+		  ;
+
+assignment : TK_IDENTIFIER '=' expr ';'
+		   | TK_IDENTIFIER '[' expr ']' '=' expr ';'
+		   ;
+
+expr : value
+	 ;
+
+
+
+if_st : KW_IF '(' expr ')' scope
+	  ;
+
+if_else_st : if_then KW_ELSE scope
+	  	   ;
+
+while_st : KW_WHILE '(' expr ')' scope
+	     ;
 
 %%
 

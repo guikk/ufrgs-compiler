@@ -13,13 +13,14 @@ build: lexer parser
 	@gcc -c hash.c
 	@gcc -c lex.yy.c
 	@gcc -c y.tab.c
-	@gcc -o etapa$(PHASE_NUM) main.o hash.o lex.yy.o y.tab.o
+	@gcc -o etapa$(PHASE_NUM) \
+	main.o hash.o lex.yy.o y.tab.o
 
 deploy:
 	@tar cvzf etapa$(PHASE_NUM).tgz .
 
 lexer:
-	@flex --header-file=lex.yy.h scanner.l 
+	@flex --header-file=lex.yy.h lexer.l 
 
 parser:
 	@yacc -d -v parser.y
