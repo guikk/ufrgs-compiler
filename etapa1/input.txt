@@ -4,7 +4,7 @@ if else while input print return
 
 , ; ( ) [ ] { } = + - * / % < > & | ~
 
-x y1 1z _ 3_ _3 ifi if2 3int
+x y1 1z _ 3_ _3 ifi if2 3int Guigas _3Gui 3dGuiG
 
 1 2 123 321
 'a' 'X' '-' '\n' '\b' '\'' '\"' '\\'

@@ -47,10 +47,10 @@ return     {return KW_RETURN;}
 				return LIT_INT;
 			}
 
-[0-9a-z_]+  {
-				add_symbol(TK_IDENTIFIER, yytext);
-				return TK_IDENTIFIER;
-			}
+[0-9a-zA-Z_]+   {
+					add_symbol(TK_IDENTIFIER, yytext);
+					return TK_IDENTIFIER;
+				}
 
 {number}\.{digit}+ 	{
 						add_symbol(LIT_FLOAT, yytext);
