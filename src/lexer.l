@@ -47,7 +47,7 @@ return     {return KW_RETURN;}
 				return LIT_INT;
 			}
 
-[{digit}a-zA-Z_]+   {
+[0-9a-zA-Z_]+   {
 					add_symbol(SYMBOL_IDENTIFIER, yytext);
 					return TK_IDENTIFIER;
 				}
