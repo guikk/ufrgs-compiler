@@ -1,0 +1,7 @@
+// UFRGS - Compiladores - Marcelo Johann - 2023/2
+
+char a=15;
+char x='x';
+char c='x';
+char d=100;
+int 1a='A';
