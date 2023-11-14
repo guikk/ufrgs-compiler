@@ -35,6 +35,11 @@
 
 %token TOKEN_ERROR
 
+%left '*' '/'
+%left '+' '-'
+%left OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
+%left '<' '>' '&' '|' '~'
+
 %%
 
 program : decl_list func_impl_list
@@ -102,19 +107,20 @@ assignment : TK_IDENTIFIER '=' expr ';'
 expr : TK_IDENTIFIER
 	 | TK_IDENTIFIER '[' expr ']'
 	 | value
+	 | '(' expr ')'
 	 | expr '+' expr
 	 | expr '-' expr
 	 | expr '*' expr
 	 | expr '/' expr
 	 | expr '<' expr
 	 | expr '>' expr
-	 | expr '<=' expr
-	 | expr '>=' expr
-	 | expr '==' expr
-	 | expr '!=' expr
+     | expr OPERATOR_GE expr
+     | expr OPERATOR_LE expr
+     | expr OPERATOR_EQ expr
+     | expr OPERATOR_DIF expr
 	 | expr '&' expr
 	 | expr '|' expr
-	 | expr '~' expr
+	 | '~' expr
 	 | TK_IDENTIFIER '(' arg_list ')'
 	 | KW_INPUT '(' type ')'
 	 ;
