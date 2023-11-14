@@ -70,13 +70,16 @@ decl : var_decl
 var_decl : typed_id '=' value ';'
 		 ;
 
-vec_decl : typed_id '[' LIT_INT ']' ';'
-		 | typed_id '[' LIT_INT ']' '=' vec_init ';'
+vec_decl : typed_id '[' LIT_INT ']' vec_init ';'
 		 ;
 
-vec_init : value vec_init
-		 | value
+vec_init : vec_init_values
+		 |
 		 ;
+
+vec_init_values : value vec_init_values
+				| value 
+				;
 
 func_decl : typed_id '(' ')' ';'
 		  | typed_id '(' param_list ')' ';'
