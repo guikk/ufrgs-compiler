@@ -2,10 +2,10 @@
 	#include <stdlib.h>
 	#include "main.h"
 /*
-* Etapa 2 - parser.y
-* INF-UFRGS - INF01147 Compiladores - 2023/2
-* Guilherme Klein Kern
-*/
+ * Etapa 2 - parser.y
+ * INF-UFRGS - INF01147 Compiladores - 2023/2
+ * Guilherme Klein Kern
+ */
 %}
 
 %token KW_CHAR
@@ -49,9 +49,9 @@ typed_id : type TK_IDENTIFIER
 		 ;
 
 value : LIT_CHAR
-		   | LIT_FLOAT
-		   | LIT_INT
-		   ;
+	  | LIT_FLOAT
+	  | LIT_INT
+	  ;
 
 decl_list : decl decl_list
 		  |
@@ -65,11 +65,12 @@ decl : var_decl
 var_decl : typed_id '=' value ';'
 		 ;
 
-vec_decl : typed_id '[' LIT_INT ']' vec_init ';'
+vec_decl : typed_id '[' LIT_INT ']' ';'
+		 | typed_id '[' LIT_INT ']' '=' vec_init ';'
 		 ;
 
 vec_init : value vec_init
-		 |
+		 | value
 		 ;
 
 func_decl : typed_id '(' ')' ';'
@@ -84,37 +85,64 @@ func_impl_list : func_impl func_impl_list
 			   |
 			   ;
 
-func_impl : KW_CODE TK_IDENTIFIER scope
+func_impl : KW_CODE TK_IDENTIFIER command
 		  ;
 
-scope : '{' statemet_list '}'
+command : assignment
+		| KW_PRINT LIT_STRING ';'
+		| KW_PRINT expr ';'
+		| KW_RETURN expr ';'
+		| scope
+		;
 
-statemet_list : statement statemet_list
+assignment : TK_IDENTIFIER '=' expr ';'
+		   | TK_IDENTIFIER '[' expr ']' '=' expr ';'
+		   ;		
+
+expr : TK_IDENTIFIER
+	 | TK_IDENTIFIER '[' expr ']'
+	 | value
+	 | expr '+' expr
+	 | expr '-' expr
+	 | expr '*' expr
+	 | expr '/' expr
+	 | expr '<' expr
+	 | expr '>' expr
+	 | expr '<=' expr
+	 | expr '>=' expr
+	 | expr '==' expr
+	 | expr '!=' expr
+	 | expr '&' expr
+	 | expr '|' expr
+	 | expr '~' expr
+	 | TK_IDENTIFIER '(' arg_list ')'
+	 | KW_INPUT '(' type ')'
+	 ;
+
+arg_list : expr
+		 | expr ',' arg_list 
+		 ;
+
+scope : '{' statement_list '}'  
+
+
+statement_list : statement statement_list
 			  |
 			  ;
 
-statement : assignment
+statement : command 
 		  | if_st
 		  | if_else_st
 		  | while_st
 		  ;
 
-assignment : TK_IDENTIFIER '=' expr ';'
-		   | TK_IDENTIFIER '[' expr ']' '=' expr ';'
-		   ;
-
-expr : value
-	 ;
-
-
-
-if_st : KW_IF '(' expr ')' scope
+if_st : KW_IF '(' expr ')' command
 	  ;
 
-if_else_st : if_then KW_ELSE scope
+if_else_st : if_st KW_ELSE command
 	  	   ;
 
-while_st : KW_WHILE '(' expr ')' scope
+while_st : KW_WHILE '(' expr ')' command
 	     ;
 
 %%

@@ -1,5 +1,5 @@
 %{
-#include "tokens.h"
+#include "y.tab.h"
 #include "hash.h"
 
 /*
@@ -43,27 +43,27 @@ return     {return KW_RETURN;}
 "!="         {return OPERATOR_DIF;}
 
 {number}	{
-				add_symbol(LIT_INT, yytext);
+				add_symbol(SYMBOL_LIT_INT, yytext);
 				return LIT_INT;
 			}
 
 [{digit}a-zA-Z_]+   {
-					add_symbol(TK_IDENTIFIER, yytext);
+					add_symbol(SYMBOL_IDENTIFIER, yytext);
 					return TK_IDENTIFIER;
 				}
 
 {number}\.{digit}+ 	{
-						add_symbol(LIT_FLOAT, yytext);
+						add_symbol(SYMBOL_LIT_FLOAT, yytext);
 						return LIT_FLOAT;
 					}
 
 '({escape}|[^\"'\\])'   {
-							add_symbol(LIT_CHAR, yytext);
+							add_symbol(SYMBOL_LIT_CHAR, yytext);
 							return LIT_CHAR;
 						}
 		
 \"({escape}|[^"])*\"    {
-							add_symbol(LIT_STRING, yytext);
+							add_symbol(SYMBOL_LIT_STRING, yytext);
 							return LIT_STRING;
 						}
 
