@@ -48,7 +48,7 @@ code main
     {
     a = a + 1;
     print "A era=15\n";
-    };
+    }
     
   if (i==100)
     {
