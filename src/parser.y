@@ -1,6 +1,9 @@
 %{
 	#include <stdlib.h>
 	#include "main.h"
+	int yyerror();
+	int yylex();
+	extern int getLineNumber();
 /*
  * Etapa 2 - parser.y
  * INF-UFRGS - INF01147 Compiladores - 2023/2
@@ -101,6 +104,7 @@ command : assignment
 		| KW_PRINT expr ';'
 		| KW_RETURN expr ';'
 		| scope
+		| ';'
 		;
 
 assignment : TK_IDENTIFIER '=' expr ';'
