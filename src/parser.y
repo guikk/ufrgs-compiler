@@ -1,6 +1,7 @@
 %{
 	#include <stdlib.h>
 	#include "main.h"
+	#include "symbol_table.h"
 	#include "ast.h"
 	int yyerror();
 	int yylex();
@@ -11,7 +12,7 @@
  * Guilherme Klein Kern
  */
 
-	ast_node* root;
+	ast* root;
 %}
 
 %union{
@@ -77,7 +78,7 @@
 
 %%
 
-program : decl_list func_impl_list    {$$=ast_new(AST_PROGRAM,0,$1,$2,0,0); root=$$; ast_print(root);}
+program : decl_list func_impl_list    {$$=ast_new(AST_PROGRAM,0,$1,$2,0,0); root=$$;}
 		;
 
 type : KW_CHAR    {$$=ast_new(AST_CHAR_T,0,0,0,0,0);}
@@ -91,7 +92,7 @@ value : LIT_CHAR    {$$=ast_new(AST_SYMBOL,$1,0,0,0,0);}
 	  ;
 
 decl_list : decl decl_list   {$$=ast_new(AST_DECL_L,0,$1,$2,0,0);}
-		  |					 {$=0;}
+		  |					 {$$=0;}
 		  ;
 
 decl : var_decl    {$$=$1;}
@@ -99,10 +100,10 @@ decl : var_decl    {$$=$1;}
 	 | func_decl   {$$=$1;}
 	 ;
 
-var_decl : type TK_IDENTIFIER '=' value ';'  {$$=ast_new(AST_DECL_VAR,$2,$1,0,0,0);}
+var_decl : type TK_IDENTIFIER '=' value ';'  {$$=ast_new(AST_DECL_VAR,$2,$1,$4,0,0);}
 		 ;
 
-vec_decl : type TK_IDENTIFIER '[' LIT_INT ']' vec_init ';' {$$=ast_new(AST_DECL_VEC,$2,$1,ast_new(AST_SYMBOL,$1,0,0,0,0),$6,0);}
+vec_decl : type TK_IDENTIFIER '[' LIT_INT ']' vec_init ';' {$$=ast_new(AST_DECL_VEC,$2,$1,ast_new(AST_SYMBOL,$4,0,0,0,0),$6,0);}
 		 ;
 
 vec_init : vec_init_values    {$$=$1;}
@@ -140,51 +141,51 @@ assignment : TK_IDENTIFIER '=' expr ';'                 {$$=ast_new(AST_ASSIGN,$
 		   | TK_IDENTIFIER '[' expr ']' '=' expr ';'    {$$=ast_new(AST_VECASSIGN,$1,$3,$6,0,0);}
 		   ;		
 
-expr : TK_IDENTIFIER                     {ast_new(AST_SYMBOL,$1,0,0,0,0);}
-	 | TK_IDENTIFIER '[' expr ']'        {ast_new(AST_VECELEM,$1,$3,0,0,0);}
+expr : TK_IDENTIFIER                     {$$=ast_new(AST_SYMBOL,$1,0,0,0,0);}
+	 | TK_IDENTIFIER '[' expr ']'        {$$=ast_new(AST_VECELEM,$1,$3,0,0,0);}
 	 | value                             {$$=$1;}
-	 | '(' expr ')'                      {ast_new(AST_PAREXPR,0,$1,0,0,0);}
-	 | expr '+' expr                     {ast_new(AST_SUM,0,$1,$3,0,0);}
-	 | expr '-' expr                     {ast_new(AST_SUB,0,$1,$3,0,0);}
-	 | expr '*' expr                     {ast_new(AST_MUL,0,$1,$3,0,0);}
-	 | expr '/' expr                     {ast_new(AST_DIV,0,$1,$3,0,0);}
-	 | expr '<' expr                     {ast_new(AST_GT,0,$1,$3,0,0);}
-	 | expr '>' expr                     {ast_new(AST_LT,0,$1,$3,0,0);}
-     | expr OPERATOR_GE expr             {ast_new(AST_GE,0,$1,$3,0,0);}
-     | expr OPERATOR_LE expr             {ast_new(AST_LE,0,$1,$3,0,0);} 
-     | expr OPERATOR_EQ expr             {ast_new(AST_EQ,0,$1,$3,0,0);}
-     | expr OPERATOR_DIF expr            {ast_new(AST_DIF,0,$1,$3,0,0);}
-	 | expr '&' expr                     {ast_new(AST_AND,0,$1,$3,0,0);}
-	 | expr '|' expr                     {ast_new(AST_OR,0,$1,$3,0,0);}
-	 | '~' expr                          {ast_new(AST_NOT,0,$2,0,0,0);}
-	 | TK_IDENTIFIER '(' arg_list ')'    {ast_new(AST_FUNCCALL,$1,$3,0,0,0);}
-	 | KW_INPUT '(' type ')'             {ast_new(AST_INPUT,0,$3,0,0,0);}
+	 | '(' expr ')'                      {$$=ast_new(AST_PAREXPR,0,$2,0,0,0);}
+	 | expr '+' expr                     {$$=ast_new(AST_SUM,0,$1,$3,0,0);}
+	 | expr '-' expr                     {$$=ast_new(AST_SUB,0,$1,$3,0,0);}
+	 | expr '*' expr                     {$$=ast_new(AST_MUL,0,$1,$3,0,0);}
+	 | expr '/' expr                     {$$=ast_new(AST_DIV,0,$1,$3,0,0);}
+	 | expr '<' expr                     {$$=ast_new(AST_GT,0,$1,$3,0,0);}
+	 | expr '>' expr                     {$$=ast_new(AST_LT,0,$1,$3,0,0);}
+     | expr OPERATOR_GE expr             {$$=ast_new(AST_GE,0,$1,$3,0,0);}
+     | expr OPERATOR_LE expr             {$$=ast_new(AST_LE,0,$1,$3,0,0);} 
+     | expr OPERATOR_EQ expr             {$$=ast_new(AST_EQ,0,$1,$3,0,0);}
+     | expr OPERATOR_DIF expr            {$$=ast_new(AST_DIF,0,$1,$3,0,0);}
+	 | expr '&' expr                     {$$=ast_new(AST_AND,0,$1,$3,0,0);}
+	 | expr '|' expr                     {$$=ast_new(AST_OR,0,$1,$3,0,0);}
+	 | '~' expr                          {$$=ast_new(AST_NOT,0,$2,0,0,0);}
+	 | TK_IDENTIFIER '(' arg_list ')'    {$$=ast_new(AST_FUNCCALL,$1,$3,0,0,0);}
+	 | KW_INPUT '(' type ')'             {$$=ast_new(AST_INPUT,0,$3,0,0,0);}
 	 ;
 
-arg_list : expr                 {ast_new(AST_ARG_L,0,$1,0,0,0);}
-		 | expr ',' arg_list    {ast_new(AST_ARG_L,0,$1,$2,0,0);} 
+arg_list : expr                 {$$=ast_new(AST_ARG_L,0,$1,0,0,0);}
+		 | expr ',' arg_list    {$$=ast_new(AST_ARG_L,0,$1,$3,0,0);} 
 		 ;
 
 scope : '{' statement_list '}'  {$$=ast_new(AST_SCOPE,0,$2,0,0,0);}
 
 
-statement_list : statement statement_list    {ast_new(AST_STMT_L,0,$1,$2,0,0);}
+statement_list : statement statement_list    {$$=ast_new(AST_STMT_L,0,$1,$2,0,0);}
 			   |                             {$$=0;}
 			   ;
 
-statement : command       {SS=$1;}
-		  | if_st         {SS=$1;}
-		  | if_else_st    {SS=$1;}
-		  | while_st      {SS=$1;}
+statement : command       {$$=$1;}
+		  | if_st         {$$=$1;}
+		  | if_else_st    {$$=$1;}
+		  | while_st      {$$=$1;}
 		  ;
 
-if_st : KW_IF '(' expr ')' command    {ast_new(AST_IF,0,$3,$5,0,0);}
+if_st : KW_IF '(' expr ')' command    {$$=ast_new(AST_IF,0,$3,$5,0,0);}
 	  ;
 
-if_else_st : KW_IF '(' expr ')' command KW_ELSE command    {ast_new(AST_IFELSE,0,$3,$5,$7,0);}
+if_else_st : KW_IF '(' expr ')' command KW_ELSE command    {$$=ast_new(AST_IFELSE,0,$3,$5,$7,0);}
 	  	   ;
 
-while_st : KW_WHILE '(' expr ')' command    {ast_new(AST_WHILE,0,$3,$5,0,0);}
+while_st : KW_WHILE '(' expr ')' command    {$$=ast_new(AST_WHILE,0,$3,$5,0,0);}
 	     ;
 
 %%

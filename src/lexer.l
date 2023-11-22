@@ -1,7 +1,7 @@
 %{
-#include "y.tab.h"
-#include "hash.h"
+#include "symbol_table.h"
 #include "ast.h"
+#include "y.tab.h"
 
 /*
 * Etapa 3 - lexer.l

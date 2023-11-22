@@ -1,5 +1,5 @@
 /*
- * Etapa 2 - main.c
+ * Etapa 3 - main.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -7,20 +7,23 @@
 #include <stdio.h>
 #include "main.h"
 #include "lex.yy.h"
-#include "hash.h"
+#include "symbol_table.h"
+#include "ast.h"
 
-char* filename;
+extern ast* get_parsed_ast();
+
+char* input_path;
 
 int main(int argc, char** argv) {
 
-	if (argc < 2) {
-		printf("compile: Missing input file.\nTry 'make compile target=<filename>'\n\n");
+	if (argc < 3) {
+		fprintf(stderr,"compile: Missing argument(s).\nTry 'make compile target=<input-path> out=<output-path>'\n\n");
 		exit(ERR_NO_INPUT);
     }
 
-	filename = argv[1];
-  	if (0 == (yyin = fopen(filename, "r"))) {
-		printf("compile: Cannot open file \'%s\'.\n\n", filename);
+	input_path = argv[1];
+  	if (0 == (yyin = fopen(input_path, "r"))) {
+		fprintf(stderr,"compile: Cannot open file \'%s\'.\n\n", input_path);
 		exit(ERR_OPEN_FILE);
     }
 
@@ -28,11 +31,16 @@ int main(int argc, char** argv) {
 	
 	yyparse();
 
-	print_symbol_table();
+	// print_symbol_table();
+
+	ast* parsed = get_parsed_ast();
+	ast_print(parsed);
+	ast_decompile(parsed, argv[2]);
+
 
 	exit(0);
 }
 
 char* get_input_filename(void) {
-	return filename;
+	return input_path;
 }

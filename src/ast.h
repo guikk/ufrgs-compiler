@@ -32,13 +32,13 @@ typedef enum {
     AST_SCOPE,
     AST_EMPTYCMD,
     AST_VECELEM,
-    AST_PARENTHESES,
+    AST_PAREXPR,
     AST_SUM,
     AST_SUB,
     AST_MUL,
     AST_DIV,
     AST_LT,
-    AST_GR,
+    AST_GT,
     AST_GE,
     AST_LE,
     AST_EQ,
@@ -51,7 +51,7 @@ typedef enum {
     AST_INPUT,
     AST_STMT_L,
     AST_IF,
-    AST_ELSE,
+    AST_IFELSE,
     AST_WHILE
 } ast_type;
 
