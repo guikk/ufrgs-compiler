@@ -5,11 +5,18 @@
 	int yylex();
 	extern int getLineNumber();
 /*
- * Etapa 2 - parser.y
+ * Etapa 3 - parser.y
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
+
+	ast_node* root;
 %}
+
+%union{
+	symbol_node*s ymbol;
+	ast* tree;
+}
 
 %token KW_CHAR
 %token KW_INT
@@ -29,12 +36,12 @@
 %token OPERATOR_EQ
 %token OPERATOR_DIF
 
-%token TK_IDENTIFIER
+%token<symbol> TK_IDENTIFIER
 
-%token LIT_INT
-%token LIT_FLOAT
-%token LIT_CHAR
-%token LIT_STRING
+%token<symbol> LIT_INT
+%token<symbol> LIT_FLOAT
+%token<symbol> LIT_CHAR
+%token<symbol> LIT_STRING
 
 %token TOKEN_ERROR
 
@@ -43,18 +50,18 @@
 %left OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
 %left '<' '>' '&' '|' '~'
 
+%type<tree> program
+%type<tree> type
+
 %%
 
-program : decl_list func_impl_list
+program : decl_list func_impl_list    {$$=ast_new(AST_PROGRAM,0,$1,$2,0,0)}
 		;
 
-type : KW_CHAR
-	 | KW_FLOAT
-	 | KW_INT
+type : KW_CHAR    {$$=ast_new(AST_CHAR_T,0,0,0,0,0)}
+	 | KW_FLOAT   {$$=ast_new(AST_FLOAT_T,0,0,0,0,0)}
+	 | KW_INT     {$$=ast_new(AST_INT_T,0,0,0,0,0)}
 	 ;
-
-typed_id : type TK_IDENTIFIER
-		 ;
 
 value : LIT_CHAR
 	  | LIT_FLOAT
@@ -70,10 +77,10 @@ decl : var_decl
 	 | func_decl
 	 ;
 
-var_decl : typed_id '=' value ';'
+var_decl : type TK_IDENTIFIER '=' value ';'
 		 ;
 
-vec_decl : typed_id '[' LIT_INT ']' vec_init ';'
+vec_decl : type TK_IDENTIFIER '[' LIT_INT ']' vec_init ';'
 		 ;
 
 vec_init : vec_init_values
@@ -84,12 +91,12 @@ vec_init_values : value vec_init_values
 				| value 
 				;
 
-func_decl : typed_id '(' ')' ';'
-		  | typed_id '(' param_list ')' ';'
+func_decl : type TK_IDENTIFIER '(' ')' ';'
+		  | type TK_IDENTIFIER '(' param_list ')' ';'
 		  ;
 
-param_list : typed_id ',' param_list
-		   | typed_id
+param_list : type TK_IDENTIFIER ',' param_list
+		   | type TK_IDENTIFIER
 		   ;
 
 func_impl_list : func_impl func_impl_list
@@ -140,8 +147,8 @@ scope : '{' statement_list '}'
 
 
 statement_list : statement statement_list
-			  |
-			  ;
+			   |
+			   ;
 
 statement : command 
 		  | if_st
