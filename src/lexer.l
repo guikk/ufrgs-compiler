@@ -1,9 +1,10 @@
 %{
 #include "y.tab.h"
 #include "hash.h"
+#include "ast.h"
 
 /*
-* Etapa 2 - lexer.l
+* Etapa 3 - lexer.l
 * INF-UFRGS - INF01147 Compiladores - 2023/2
 * Guilherme Klein Kern
 */
@@ -43,27 +44,27 @@ return     {return KW_RETURN;}
 "!="         {return OPERATOR_DIF;}
 
 {number}	{
-				add_symbol(SYMBOL_LIT_INT, yytext);
+				yylval.symbol = add_symbol(SYMBOL_LIT_INT, yytext);
 				return LIT_INT;
 			}
 
 [0-9a-zA-Z_]+   {
-					add_symbol(SYMBOL_IDENTIFIER, yytext);
+					yylval.symbol = add_symbol(SYMBOL_IDENTIFIER, yytext);
 					return TK_IDENTIFIER;
 				}
 
 {number}\.{digit}+ 	{
-						add_symbol(SYMBOL_LIT_FLOAT, yytext);
+						yylval.symbol = add_symbol(SYMBOL_LIT_FLOAT, yytext);
 						return LIT_FLOAT;
 					}
 
 '({escape}|[^\"'\\])'   {
-							add_symbol(SYMBOL_LIT_CHAR, yytext);
+							yylval.symbol = add_symbol(SYMBOL_LIT_CHAR, yytext);
 							return LIT_CHAR;
 						}
 		
 \"({escape}|[^"])*\"    {
-							add_symbol(SYMBOL_LIT_STRING, yytext);
+							yylval.symbol = add_symbol(SYMBOL_LIT_STRING, yytext);
 							return LIT_STRING;
 						}
 
