@@ -30,4 +30,4 @@ compile:
 	@./etapa$(PHASE_NUM) input/$(target) output/$(target)
 
 clean:
-	@rm -f *.o etapa* lex.yy.* y.tab.* y.output
+	@rm -f *.o etapa* lex.yy.* y.tab.* y.output output/*
