@@ -29,5 +29,11 @@ parser:
 compile:
 	@./etapa$(PHASE_NUM) input/$(target) output/$(target)
 
+test:
+	@./etapa$(PHASE_NUM) input/$(target) output/$(target) > /dev/null 2>&1
+	@./etapa$(PHASE_NUM) output/$(target) output/copy-$(target) > /dev/null 2>&1
+	@diff output/$(target) output/copy-$(target) && echo "PASS :D" || echo "FAIL! :/"
+
+
 clean:
 	@rm -f *.o etapa* lex.yy.* y.tab.* y.output output/*
