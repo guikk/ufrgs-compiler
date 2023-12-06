@@ -10,6 +10,50 @@
 #include <fcntl.h>
 #include "ast.h"
 
+char* ast_type_name[] = {
+    "AST_PROGRAM",
+    "AST_DECL_L",
+    "AST_CHAR_T",
+    "AST_FLOAT_T",
+    "AST_INT_T",
+    "AST_SYMBOL",
+    "AST_DECL_VAR",
+    "AST_DECL_VEC",
+    "AST_DECL_FUNC",
+    "AST_VECINIT_L",
+    "AST_PARAM_L",
+    "AST_FUNC_L",
+    "AST_FUNC",
+    "AST_ASSIGN",
+    "AST_VECASSIGN",
+    "AST_PRINT",
+    "AST_RETURN",
+    "AST_SCOPE",
+    "AST_EMPTYCMD",
+    "AST_VECELEM",
+    "AST_PAREXPR",
+    "AST_SUM",
+    "AST_SUB",
+    "AST_MUL",
+    "AST_DIV",
+    "AST_LT",
+    "AST_GT",
+    "AST_GE",
+    "AST_LE",
+    "AST_EQ",
+    "AST_DIF",
+    "AST_AND",
+    "AST_OR",
+    "AST_NOT",
+    "AST_FUNCCALL",
+    "AST_ARG_L",
+    "AST_INPUT",
+    "AST_STMT_L",
+    "AST_IF",
+    "AST_IFELSE",
+    "AST_WHILE"
+};
+
 ast* ast_new(
     ast_type type,
     symbol_node* symbol,
@@ -38,49 +82,7 @@ void _ast_print(ast* node, int level) {
 
     fprintf(stderr, "AST( ");
 
-    switch (node->type) {
-        case AST_PROGRAM: fprintf(stderr,"AST_PROGRAM"); break;
-        case AST_DECL_L: fprintf(stderr,"AST_DECL_L"); break;
-        case AST_CHAR_T: fprintf(stderr,"AST_CHAR_T"); break;
-        case AST_FLOAT_T: fprintf(stderr,"AST_FLOAT_T"); break;
-        case AST_INT_T: fprintf(stderr,"AST_INT_T"); break;
-        case AST_SYMBOL: fprintf(stderr,"AST_SYMBOL"); break;
-        case AST_DECL_VAR: fprintf(stderr,"AST_DECL_VAR"); break;
-        case AST_DECL_VEC: fprintf(stderr,"AST_DECL_VEC"); break;
-        case AST_DECL_FUNC: fprintf(stderr,"AST_DECL_FUNC"); break;
-        case AST_VECINIT_L: fprintf(stderr,"AST_VECINIT_L"); break;
-        case AST_PARAM_L: fprintf(stderr,"AST_PARAM_L"); break;
-        case AST_FUNC_L: fprintf(stderr,"AST_FUNC_L"); break;
-        case AST_FUNC: fprintf(stderr,"AST_FUNC"); break;
-        case AST_ASSIGN: fprintf(stderr,"AST_ASSIGN"); break;
-        case AST_VECASSIGN: fprintf(stderr,"AST_VECASSIGN"); break;
-        case AST_PRINT: fprintf(stderr,"AST_PRINT"); break;
-        case AST_RETURN: fprintf(stderr,"AST_RETURN"); break;
-        case AST_SCOPE: fprintf(stderr,"AST_SCOPE"); break;
-        case AST_EMPTYCMD: fprintf(stderr,"AST_EMPTYCMD"); break;
-        case AST_VECELEM: fprintf(stderr,"AST_VECELEM"); break;
-        case AST_PAREXPR: fprintf(stderr,"AST_PAREXPR"); break;
-        case AST_SUM: fprintf(stderr,"AST_SUM"); break;
-        case AST_SUB: fprintf(stderr,"AST_SUB"); break;
-        case AST_MUL: fprintf(stderr,"AST_MUL"); break;
-        case AST_DIV: fprintf(stderr,"AST_DIV"); break;
-        case AST_LT: fprintf(stderr,"AST_LT"); break;
-        case AST_GT: fprintf(stderr,"AST_GT"); break;
-        case AST_GE: fprintf(stderr,"AST_GE"); break;
-        case AST_LE: fprintf(stderr,"AST_LE"); break;
-        case AST_EQ: fprintf(stderr,"AST_EQ"); break;
-        case AST_DIF: fprintf(stderr,"AST_DIF"); break;
-        case AST_AND: fprintf(stderr,"AST_AND"); break;
-        case AST_OR: fprintf(stderr,"AST_OR"); break;
-        case AST_NOT: fprintf(stderr,"AST_NOT"); break;
-        case AST_FUNCCALL: fprintf(stderr,"AST_FUNCCALL"); break;
-        case AST_ARG_L: fprintf(stderr,"AST_ARG_L"); break;
-        case AST_INPUT: fprintf(stderr,"AST_INPUT"); break;
-        case AST_STMT_L: fprintf(stderr,"AST_STMT_L"); break;
-        case AST_IF: fprintf(stderr,"AST_IF"); break;
-        case AST_IFELSE: fprintf(stderr,"AST_IFELSE"); break;
-        case AST_WHILE: fprintf(stderr,"AST_WHILE"); break;
-    }
+    fprintf(stderr, "%s", ast_type_name[node->type]);
 
     if(node->symbol)
         fprintf(stderr, ", %s )\n", node->symbol->text);
