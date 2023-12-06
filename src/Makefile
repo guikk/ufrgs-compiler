@@ -16,6 +16,7 @@ build: lexer parser
 	@gcc -c y.tab.c
 	@gcc -o etapa$(PHASE_NUM) \
 	main.o symbol_table.o ast.o lex.yy.o y.tab.o
+	@mkdir -p input output
 
 deploy:
 	@tar cvzf etapa$(PHASE_NUM).tgz .
