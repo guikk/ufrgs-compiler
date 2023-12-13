@@ -2,7 +2,7 @@
 #define SYMBOL_TABLE_H
 
 /*
- * Etapa 3 - symbol_table.h
+ * Etapa 4 - symbol_table.h
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */

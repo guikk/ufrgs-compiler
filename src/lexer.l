@@ -4,7 +4,7 @@
 #include "y.tab.h"
 
 /*
-* Etapa 3 - lexer.l
+* Etapa 4 - lexer.l
 * INF-UFRGS - INF01147 Compiladores - 2023/2
 * Guilherme Klein Kern
 */
@@ -20,6 +20,9 @@ whitespace [ \t]
 
 %x SINGLE_COMMENT
 %x MULTI_COMMENT
+
+%option noinput
+%option nounput
 
 %%
 
@@ -98,6 +101,4 @@ int yywrap() {
     m_is_running = 0;
     return 1;
 }
-
-
 

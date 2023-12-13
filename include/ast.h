@@ -2,7 +2,7 @@
 #define AST_H
 
 /*
- * Etapa 3 - ast.h
+ * Etapa 4 - ast.h
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */

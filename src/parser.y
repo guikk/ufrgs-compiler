@@ -7,7 +7,7 @@
 	int yylex();
 	extern int getLineNumber();
 /*
- * Etapa 3 - parser.y
+ * Etapa 4 - parser.y
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */

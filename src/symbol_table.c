@@ -1,5 +1,5 @@
 /*
- * Etapa 3 - symbol_table.c
+ * Etapa 4 - symbol_table.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -19,7 +19,8 @@ void init_symbol_table(void) {
 
 int hash(char *text) {
     int address = 1;
-    for(int i = 0; i < strlen(text); i++) {
+    int n = strlen(text);
+    for(int i = 0; i < n; i++) {
         address = (address * text[i]) % HASH_SIZE + 1;
     }
     return address - 1;

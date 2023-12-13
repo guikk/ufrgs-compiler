@@ -1,5 +1,5 @@
 /*
- * Etapa 3 - ast.c
+ * Etapa 4 - ast.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
