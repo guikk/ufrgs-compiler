@@ -38,4 +38,4 @@ test:
 
 
 clean:
-	@rm -f *.o etapa* */lex.yy.* */y.tab.* y.output output/*
+	@rm -f src/*.o etapa* */lex.yy.* */y.tab.* y.output output/*
