@@ -26,14 +26,14 @@ int hash(char *text) {
     return address - 1;
 }
 
-symbol_node* add_symbol(int type, char* text) {
+symbol_node* add_symbol(symbol_type type, char* text) {
     symbol_node* new = get_symbol(text);
     if(new != NULL)
         return new;
 
     int address = hash(text);
     new = (symbol_node*) calloc(1, sizeof(symbol_node));
-    new->type = type;
+    new->stype = type;
     new->text = calloc(strlen(text)+1, sizeof(char));
     strcpy(new->text, text);
 
@@ -60,7 +60,7 @@ void print_symbol_table(void){
         if (m_symbol_table[i] != NULL) {
             printf("Index %d = {", i);
             for (node = m_symbol_table[i]; node != NULL; node = node->next) {
-                printf(" %s(%d)", node->text, node->type);
+                printf(" %s(%d)", node->text, node->stype);
             }
             printf(" }\n");
         }
