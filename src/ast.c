@@ -56,8 +56,9 @@ char* ast_type_name[] = {
 
 ast* ast_new(
     ast_type type,
-    symbol_node* symbol,
-    ast* c0, ast* c1, ast* c2, ast* c3
+    symbol* symbol,
+    ast* c0, ast* c1, ast* c2,
+    int location
 ) {
     ast* new = calloc(1, sizeof(ast));
 
@@ -67,7 +68,8 @@ ast* ast_new(
     new->children[0] = c0;
     new->children[1] = c1;
     new->children[2] = c2;
-    new->children[3] = c3;
+
+    new->location = location;
 
     return new;
 }

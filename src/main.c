@@ -9,6 +9,7 @@
 #include "lex.yy.h"
 #include "symbol_table.h"
 #include "ast.h"
+#include "semantics.h"
 
 extern ast* get_parsed_ast();
 
@@ -16,8 +17,8 @@ char* input_path;
 
 int main(int argc, char** argv) {
 
-	if (argc < 3) {
-		fprintf(stderr,"compile: Missing argument(s).\nTry 'make compile target=<input-path> out=<output-path>'\n\n");
+	if (argc < 2) {
+		fprintf(stderr,"compile: Missing argument(s).\nTry 'make compile target=<input-path>'\n\n");
 		exit(ERR_NO_INPUT);
     }
 
@@ -34,9 +35,14 @@ int main(int argc, char** argv) {
 	// print_symbol_table();
 
 	ast* parsed = get_parsed_ast();
-	ast_print(parsed);
-	ast_decompile(parsed, argv[2]);
 
+	ast_print(parsed);
+
+	if (argc == 3) {
+		ast_decompile(parsed, argv[2]);
+	}
+
+	semantic_analysis(parsed);
 
 	exit(0);
 }

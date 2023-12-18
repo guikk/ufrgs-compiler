@@ -9,6 +9,8 @@
 #define ERR_NO_INPUT 1
 #define ERR_OPEN_FILE 2
 #define ERR_BAD_SYNTAX 3
+#define ERR_SEMANTICS 4
+#define ERR_INTERNAL 99
 
 // lexer
 // int yylex();
@@ -18,7 +20,7 @@ extern FILE *yyin;
 // parser
 extern int yyparse();
 
-int getLineNumber();
+int getLineNumber(void);
 int isRunning(void);
 void initMe(void);
 

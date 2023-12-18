@@ -9,7 +9,7 @@
 #include <string.h>
 #include "symbol_table.h"
 
-symbol_node* m_symbol_table[HASH_SIZE];
+symbol* m_symbol_table[HASH_SIZE];
 
 void init_symbol_table(void) {
     for(int i = 0; i < HASH_SIZE; i++) {
@@ -26,16 +26,24 @@ int hash(char *text) {
     return address - 1;
 }
 
-symbol_node* add_symbol(symbol_type type, char* text) {
-    symbol_node* new = get_symbol(text);
+symbol* add_symbol(symbol_type type, char* text) {
+    symbol* new = get_symbol(text);
     if(new != NULL)
         return new;
 
     int address = hash(text);
-    new = (symbol_node*) calloc(1, sizeof(symbol_node));
+    new = (symbol*) calloc(1, sizeof(symbol));
+    new->dtype = DT_UNDEFINED;
     new->stype = type;
     new->text = calloc(strlen(text)+1, sizeof(char));
     strcpy(new->text, text);
+
+    switch (type) {
+    case SYMBOL_LIT_CHAR:  new->dtype = DT_CHAR; break;
+    case SYMBOL_LIT_INT:   new->dtype = DT_INT; break;
+    case SYMBOL_LIT_FLOAT: new->dtype = DT_FLOAT; break;
+    default: break;
+    }
 
     new->next = m_symbol_table[address];
     m_symbol_table[address] = new;
@@ -43,9 +51,9 @@ symbol_node* add_symbol(symbol_type type, char* text) {
     return new;
 }
 
-symbol_node* get_symbol(char *text) {
+symbol* get_symbol(char *text) {
     int address = hash(text);
-    symbol_node* node;
+    symbol* node;
     for(node = m_symbol_table[address]; node != NULL; node = node->next) {
         if(strcmp(text, node->text) == 0)
             return node;
@@ -54,7 +62,7 @@ symbol_node* get_symbol(char *text) {
 }
 
 void print_symbol_table(void){
-    symbol_node* node;
+    symbol* node;
     printf("\n--- Symbol Table ---\n");
     for (int i = 0; i < HASH_SIZE; i++) {
         if (m_symbol_table[i] != NULL) {

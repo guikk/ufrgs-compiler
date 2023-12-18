@@ -9,7 +9,7 @@
 
 #include "symbol_table.h"
 
-#define MAX_CHILDREN 4
+#define MAX_CHILDREN 3
 
 typedef enum {
     AST_PROGRAM,
@@ -55,16 +55,18 @@ typedef enum {
     AST_WHILE
 } ast_type;
 
-typedef struct ast {
+typedef struct ast_node {
     ast_type type;
-    symbol_node* symbol;
-    struct ast* children[MAX_CHILDREN];
+    symbol* symbol;
+    struct ast_node* children[MAX_CHILDREN];
+    int location; // line of occurence in input file
 } ast;
 
 ast* ast_new(
     ast_type type,
-    symbol_node* symbol,
-    ast* c0, ast* c1, ast* c2, ast* c3
+    symbol* symbol,
+    ast* c0, ast* c1, ast* c2,
+    int location
 );
 
 void ast_print(ast* root);

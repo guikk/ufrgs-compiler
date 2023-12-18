@@ -7,8 +7,6 @@
  * Guilherme Klein Kern
  */
 
-#include "semantics.h"
-
 #define HASH_SIZE 997
 
 typedef enum {
@@ -19,17 +17,30 @@ typedef enum {
     SYMBOL_IDENTIFIER
 } symbol_type;
 
+typedef enum {
+    ID_SCALAR,
+    ID_VECTOR,
+    ID_FUNC
+} id_nature;
+
+typedef enum {
+    DT_UNDEFINED,
+    DT_CHAR,
+    DT_INT,
+    DT_FLOAT
+} data_type;
+
 typedef struct symbol_node{
     symbol_type stype;
     data_type dtype;
     id_nature nature;
     char* text;
     struct symbol_node* next;
-} symbol_node;
+} symbol;
 
 int hash(char *text);
-symbol_node* add_symbol(symbol_type type, char* text);
-symbol_node* get_symbol(char *text);
+symbol* add_symbol(symbol_type type, char* text);
+symbol* get_symbol(char *text);
 void init_symbol_table(void);
 void print_symbol_table(void);
 
