@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
 	ast* parsed = get_parsed_ast();
 
-	ast_print(parsed);
+	// ast_print(parsed);
 
 	if (argc == 3) {
 		ast_decompile(parsed, argv[2]);

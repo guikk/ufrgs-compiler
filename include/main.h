@@ -3,11 +3,8 @@
 
 #include <stdio.h>
 
-#define ASCII_MIN 0
-#define ASCII_MAX 255
-
-#define ERR_NO_INPUT 1
-#define ERR_OPEN_FILE 2
+#define ERR_NO_INPUT 101
+#define ERR_OPEN_FILE 102
 #define ERR_BAD_SYNTAX 3
 #define ERR_SEMANTICS 4
 #define ERR_INTERNAL 99

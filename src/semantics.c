@@ -22,6 +22,9 @@ void check_data_types(ast* tree);
 void check_arguments(ast* tree);
 void check_function(ast* func);
 
+int m_location; // line where the AST node being analyzed is on the source code
+int m_error_count = 0;
+
 void semantic_analysis(ast* program) {
     if (!program || program->type != AST_PROGRAM) {
         fprintf(stderr,"Error: not a valid program");
@@ -29,9 +32,13 @@ void semantic_analysis(ast* program) {
     }
 
     check_declarations(program->children[0]);
+
+    if (m_error_count > 0) {  
+        fprintf(stderr,"%s: found %d error(s)\n", get_input_filename(), m_error_count);
+        exit(ERR_SEMANTICS);
+    }
 }
 
-int m_location;
 void semantic_error(char* message, ...) {
     va_list args;
     va_start(args, message);
@@ -39,7 +46,7 @@ void semantic_error(char* message, ...) {
     vfprintf(stderr, message, args);
     fprintf(stderr,"\n");
     va_end(args);
-    exit(ERR_SEMANTICS);
+    m_error_count++;
 }
 
 /*
@@ -89,18 +96,23 @@ void check_declaration(ast* declaration) {
         register_identifier(ID_VECTOR, id, type_kw);
 
         ast* vec_size = declaration->children[1];
-        if (vec_size->symbol->dtype != DT_INT) {
-            semantic_error("vector size must be integer");
-        }
+        int expected = atoi(vec_size->symbol->text);
+        int actual = 0;
 
         // check initialization type for each entry
         ast* vec_init = declaration->children[2];
         while(vec_init) {
+            actual++;
             check_type_compatibility(
                 id->dtype,
                 vec_init->children[0]->symbol->dtype
             );
             vec_init = vec_init->children[1];
+        }
+        
+        // check initialization size
+        if (expected != actual) {
+            semantic_error("expected %d vector elements but got %d", expected, actual);
         }
         break;
     case AST_DECL_FUNC: 
