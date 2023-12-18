@@ -1,0 +1,33 @@
+///
+    Declaration List
+\\\
+
+// variable declarations
+char c1 = 'c';
+char c2 = 15;
+int i1 = 'i';
+int i2 = 1;
+float f1 = 2.5;
+
+// vector declarations
+int v1[100];
+int v2[10] 'a' 0 'b' 0 0 0 0 0 0 0;
+
+int main();
+float func(int arg1, char arg2, float arg3);
+
+///
+    Function implementations
+\\\
+
+code main {
+
+}
+
+code func {
+
+}
+
+// end of file
+  
+

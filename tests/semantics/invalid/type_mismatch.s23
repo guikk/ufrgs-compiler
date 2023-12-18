@@ -1,0 +1,8 @@
+int x = 0.1;
+char c = 0.5;
+float f1 = 1;
+float f2 = '2';
+
+int vx[1] 5.5555555;
+char vc[1] 2.342;
+float vf[2] 123123123123 '%';
