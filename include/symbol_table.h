@@ -18,6 +18,7 @@ typedef enum {
 } symbol_type;
 
 typedef enum {
+    ID_UNDEFINED,
     ID_SCALAR,
     ID_VECTOR,
     ID_FUNC
@@ -36,6 +37,7 @@ typedef struct symbol_node{
     id_nature nature;
     char* text;
     struct symbol_node* next;
+    int is_implemented;
 } symbol;
 
 int hash(char *text);

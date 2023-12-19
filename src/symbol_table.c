@@ -33,8 +33,10 @@ symbol* add_symbol(symbol_type type, char* text) {
 
     int address = hash(text);
     new = (symbol*) calloc(1, sizeof(symbol));
-    new->dtype = DT_UNDEFINED;
     new->stype = type;
+    new->dtype = DT_UNDEFINED;
+    new->nature = ID_UNDEFINED;
+
     new->text = calloc(strlen(text)+1, sizeof(char));
     strcpy(new->text, text);
 
