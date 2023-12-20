@@ -20,11 +20,14 @@ void check_type_compatibility(data_type a, data_type b);
 void check_functions(ast* func_list);
 void check_function(ast* func);
 
-void check_statement(ast* statement, data_type return_type);
-
 void check_missing_implementations(ast* decl_list);
 
-void check_identifier_usage(ast* statement);
+void check_statement(ast* statement, data_type return_type);
+
+int check_identifier_usage(symbol* id, id_nature nature);
+
+data_type check_expression(ast* expr);
+
 void check_data_types(ast* tree);
 void check_arguments(ast* tree);
 
@@ -112,11 +115,15 @@ void check_declaration(ast* declaration) {
         register_identifier(ID_VECTOR, id, type_kw);
 
         ast* vec_size = declaration->children[1];
+        ast* vec_init = declaration->children[2];
+
+        if (!vec_init) {
+            return;
+        }
+
+        // check initialization type and size
         int expected = atoi(vec_size->symbol->text);
         int actual = 0;
-
-        // check initialization type for each entry
-        ast* vec_init = declaration->children[2];
         while(vec_init) {
             actual++;
             check_type_compatibility(
@@ -225,28 +232,12 @@ void check_function(ast* function) {
     m_location = function->location;
     symbol* id = function->symbol;
 
-    if (id->nature == ID_UNDEFINED) {
-        semantic_error("identifier '%s' undefined", id->text);
-        return;
-    }
-
-    if (id->nature != ID_FUNC) {
-        semantic_error("'%s' is not a function identifier", id->text);
-        return;
-    }
+    check_identifier_usage(id, ID_FUNC);
 
     check_statement(function->children[0], id->dtype);
 
     id->is_implemented = 1;
 }
-
-void check_statement(ast* statement, data_type return_type) {
-    if (!statement) {
-        fprintf(stderr,"Error: null statement\n");
-        exit(ERR_INTERNAL);
-    }
-}
-
 
 void check_missing_implementations(ast* decl_list) {
     while(decl_list) {
@@ -258,4 +249,104 @@ void check_missing_implementations(ast* decl_list) {
 
         decl_list = decl_list->children[1];
     }
+}
+
+void check_statement(ast* statement, data_type return_type) {
+    if (!statement) {
+        fprintf(stderr,"Error: null statement\n");
+        exit(ERR_INTERNAL);
+    }
+
+    m_location = statement->location;
+    data_type dt;
+
+    switch (statement->type) {
+    case AST_IFELSE:
+        check_statement(statement->children[2], return_type);
+    case AST_IF:
+    case AST_WHILE:
+        if (check_expression(statement->children[0]) != DT_INT) {
+            semantic_error("condition must be integer");
+        }
+        check_statement(statement->children[1], return_type);
+        break;
+
+    // commands
+    case AST_ASSIGN:
+        check_identifier_usage(statement->symbol, ID_SCALAR);
+        dt = check_expression(statement->children[1]);
+        check_type_compatibility(statement->symbol->dtype, dt);
+        break;
+    case AST_VECASSIGN:
+        check_identifier_usage(statement->symbol, ID_VECTOR);
+        if (check_expression(statement->children[0]) != DT_INT) {
+            semantic_error("vector index must be an integer");
+        }
+        
+        dt = check_expression(statement->children[0]);
+        check_type_compatibility(statement->symbol->dtype, dt);
+        break;
+
+    case AST_PRINT:
+        ast* arg = statement->children[0];
+        if (arg->type == AST_SYMBOL && arg->symbol->stype == SYMBOL_LIT_STRING) {
+            break;
+        }
+        check_expression(arg);
+        break;
+    case AST_RETURN:
+        check_type_compatibility(
+            return_type,
+            check_expression(statement->children[0])
+        );
+        // if (dt != return_type) {
+        //     semantic_error(
+        //         "expected %s as return type but got %s",
+        //         dt_str[return_type], dt_str[dt]
+        //     );
+        // }
+        break;
+    case AST_SCOPE:
+        ast* stmt_list = statement->children[0];
+        while(stmt_list) {
+            check_statement(stmt_list->children[0], return_type);
+            stmt_list = stmt_list->children[1];
+        }
+        break;
+    case AST_EMPTYCMD:
+        break;
+    default:
+        fprintf(stderr,"Error: not a valid statement");
+        exit(ERR_INTERNAL);
+    }
+
+}
+
+char* nature_str[] = {
+    "undefined",
+    "scalar",
+    "vector",
+    "function"
+};
+
+int check_identifier_usage(symbol* id, id_nature nature) {
+    if (id->nature == ID_UNDEFINED) {
+        semantic_error("identifier '%s' undefined", id->text);
+        return 1;
+    }
+
+    if (id->nature != nature) {
+        semantic_error(
+            "'%s' (%s) is not a %s identifier",
+            id->text, nature_str[id->nature], nature_str[nature]
+        );
+        return 2;
+    }
+
+    return 0;
+}
+
+data_type check_expression(ast* expr) {
+
+    return DT_UNDEFINED;
 }

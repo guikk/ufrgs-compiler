@@ -1,0 +1,5 @@
+int pi();
+
+code pi {
+    return 3.14;
+}
