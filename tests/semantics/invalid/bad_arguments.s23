@@ -1,0 +1,17 @@
+int main ();
+
+int fib(int n);
+float sum(float a, float b);
+char succ(char ch);
+
+code main {
+    print fib(1.0);
+    print fib(1,2);
+    print sum(1,2);
+    print sum(1.0);
+    print succ(1);
+}
+
+code fib;
+code sum;
+code succ;

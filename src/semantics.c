@@ -28,21 +28,23 @@ int check_identifier_usage(symbol* id, id_nature nature);
 
 data_type check_expression(ast* expr);
 
-void check_data_types(ast* tree);
-void check_arguments(ast* tree);
+ast* fetch_function_declaration(symbol* func_id);
+void check_arguments(symbol* func_id, ast* arg_list);
 
 int m_location; // line where the AST node being analyzed is on the source code
 int m_error_count = 0;
+ast* m_declarations;
 
 void semantic_analysis(ast* program) {
     if (!program || program->type != AST_PROGRAM) {
-        fprintf(stderr,"Error: not a valid program");
+        fprintf(stderr,"Error: not a valid program\n");
         exit(ERR_INTERNAL);
     }
 
     ast* declarations = program->children[0];
     ast* functions = program->children[1];
 
+    m_declarations = declarations;
     check_declarations(declarations);
     check_functions(functions);
 
@@ -97,7 +99,7 @@ void check_declaration(ast* declaration) {
     symbol* id = declaration->symbol;
     ast* type_kw = declaration->children[0];
 
-    switch(declaration->type) {
+    switch (declaration->type) {
     case AST_DECL_VAR:
         register_identifier(ID_SCALAR, id, type_kw);
         
@@ -159,9 +161,23 @@ void check_declaration(ast* declaration) {
     }
 }
 
+data_type n2dtype(ast* type_node) {
+    switch (type_node->type) {
+    case AST_INT_T:
+        return DT_INT;
+    case AST_CHAR_T:
+        return DT_CHAR;
+    case AST_FLOAT_T:
+        return DT_FLOAT;
+    default:
+        fprintf(stderr,"Error: not a valid type node\n");
+        exit(ERR_INTERNAL);
+    }
+}
+
 void register_identifier(id_nature nature, symbol* identifier, ast* type_kw) {
     if (identifier->stype != SYMBOL_IDENTIFIER) {
-        fprintf(stderr,"Error: not an identifier");
+        fprintf(stderr,"Error: not an identifier\n");
         exit(ERR_INTERNAL);
     } 
     
@@ -173,20 +189,7 @@ void register_identifier(id_nature nature, symbol* identifier, ast* type_kw) {
     }
 
     identifier->nature = nature;
-    switch(type_kw->type) {
-    case AST_INT_T:
-        identifier->dtype = DT_INT;
-        break;
-    case AST_CHAR_T:
-        identifier->dtype = DT_CHAR;
-        break;
-    case AST_FLOAT_T:
-        identifier->dtype = DT_FLOAT;
-        break;
-    default:
-        fprintf(stderr,"Error: not a valid type node");
-        exit(ERR_INTERNAL);
-    }
+    identifier->dtype = n2dtype(type_kw);
 }
 
 char* dt_str[] = {
@@ -197,16 +200,18 @@ char* dt_str[] = {
 };
 
 void check_type_compatibility(data_type a, data_type b) {
-    if (a == b) {
+    if (
+        (a == b) ||
+        (a==DT_INT && b==DT_CHAR) ||
+        (a==DT_CHAR && b==DT_INT)
+    ) {
         return;
     }
 
-    if (a == DT_FLOAT || b == DT_FLOAT) {
-        semantic_error(
-            "type %s is not compatible with %s",
-            dt_str[a], dt_str[b]
-        );
-    }
+    semantic_error(
+        "type %s is not compatible with %s",
+        dt_str[a], dt_str[b]
+    );
 }
 
 void check_functions(ast* func_list) {
@@ -261,8 +266,6 @@ void check_statement(ast* statement, data_type return_type) {
     data_type dt;
 
     switch (statement->type) {
-    case AST_IFELSE:
-        check_statement(statement->children[2], return_type);
     case AST_IF:
     case AST_WHILE:
         if (check_expression(statement->children[0]) != DT_INT) {
@@ -270,11 +273,18 @@ void check_statement(ast* statement, data_type return_type) {
         }
         check_statement(statement->children[1], return_type);
         break;
+    case AST_IFELSE:
+        if (check_expression(statement->children[0]) != DT_INT) {
+            semantic_error("condition must be integer");
+        }
+        check_statement(statement->children[1], return_type);
+        check_statement(statement->children[2], return_type);
+        break;
 
     // commands
     case AST_ASSIGN:
         check_identifier_usage(statement->symbol, ID_SCALAR);
-        dt = check_expression(statement->children[1]);
+        dt = check_expression(statement->children[0]);
         check_type_compatibility(statement->symbol->dtype, dt);
         break;
     case AST_VECASSIGN:
@@ -299,6 +309,7 @@ void check_statement(ast* statement, data_type return_type) {
             return_type,
             check_expression(statement->children[0])
         );
+        // TODO: custom error message
         // if (dt != return_type) {
         //     semantic_error(
         //         "expected %s as return type but got %s",
@@ -316,10 +327,9 @@ void check_statement(ast* statement, data_type return_type) {
     case AST_EMPTYCMD:
         break;
     default:
-        fprintf(stderr,"Error: not a valid statement");
+        fprintf(stderr,"Error: not a valid statement\n");
         exit(ERR_INTERNAL);
     }
-
 }
 
 char* nature_str[] = {
@@ -347,6 +357,109 @@ int check_identifier_usage(symbol* id, id_nature nature) {
 }
 
 data_type check_expression(ast* expr) {
+    m_location = expr->location;
 
-    return DT_UNDEFINED;
+    switch (expr->type) {
+    case AST_SYMBOL:
+        if (expr->symbol->stype == SYMBOL_IDENTIFIER) {
+            check_identifier_usage(expr->symbol, ID_SCALAR);
+        }
+        return expr->symbol->dtype;
+    case AST_VECELEM:
+        check_identifier_usage(expr->symbol, ID_VECTOR);
+        if (check_expression(expr->children[0]) != DT_INT) {
+            semantic_error("vector index must be an integer");
+        }
+        return expr->symbol->dtype;
+    // Unary operations
+    case AST_PAREXPR:
+    case AST_NOT:
+        return check_expression(expr->children[0]);
+
+    // Binary operations
+    case AST_SUM:
+    case AST_SUB:
+    case AST_MUL:
+    case AST_DIV:
+    case AST_LT:
+    case AST_GT:
+    case AST_GE:
+    case AST_LE:
+    case AST_EQ:
+    case AST_DIF:
+    case AST_AND:
+    case AST_OR:
+        data_type dt1, dt2;
+        dt1 = check_expression(expr->children[0]);
+        dt2 = check_expression(expr->children[1]);
+        check_type_compatibility(dt1, dt2);
+        return dt1;
+
+    case AST_FUNCCALL:
+        if (check_identifier_usage(expr->symbol, ID_FUNC) > 0) {
+            return DT_UNDEFINED;
+        }
+        check_arguments(expr->symbol, expr->children[0]);
+        return expr->symbol->dtype;
+    case AST_INPUT:
+        return n2dtype(expr->children[0]);
+    default:
+        fprintf(stderr,"Error: not a valid expression\n");
+        exit(ERR_INTERNAL);
+    }
+}
+
+ast* fetch_function_declaration(symbol* func_id) {
+    ast* decl_list = m_declarations;
+
+    while (decl_list) {
+        if (decl_list->children[0]->symbol == func_id) {
+            return decl_list->children[0];
+        }
+        decl_list = decl_list->children[1];
+    }
+
+    fprintf(stderr,"Error: can't find function declaration\n");
+    exit(ERR_INTERNAL);
+}
+
+void check_arguments(symbol* func_id, ast* arg_list) {
+    ast* param_list = fetch_function_declaration(func_id)->children[1];
+
+    m_location = arg_list->location;
+
+    int np = 0; // number of parameters
+    int na = 0; // number of arguments
+    while (param_list && arg_list) {
+        check_type_compatibility(
+            param_list->symbol->dtype,
+            check_expression(arg_list->children[0])
+        );
+
+        param_list = param_list->children[1];
+        arg_list = arg_list->children[1];
+        np++; na++;
+    }
+
+    while (param_list) {
+        param_list = param_list->children[1];
+        np++;
+    }
+
+    while (arg_list) {
+        arg_list = arg_list->children[1];
+        na++;
+    }
+
+    if (np > na) {
+        semantic_error(
+            "not enough arguments to function '%s', expected %d but got %d",
+            func_id->text, np, na
+        );
+    } else if (na > np) {
+        semantic_error(
+            "too many arguments to function '%s', expected %d but got %d",
+            func_id->text, np, na
+        );
+    }
 }

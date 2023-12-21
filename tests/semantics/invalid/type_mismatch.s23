@@ -6,3 +6,11 @@ float f2 = '2';
 int vx[1] 5.5555555;
 char vc[1] 2.342;
 float vf[2] 123123123123 '%';
+
+int main();
+
+code main {
+    print 1 + 1.0;
+    print 1 & 0 | 0.0;
+    print 5.0 / 3 * 3;
+}
