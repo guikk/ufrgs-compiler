@@ -15,7 +15,7 @@ void check_declarations(ast* decl_list);
 void check_declaration(ast* declaration);
 void register_identifier(id_nature nature, symbol* identifier, ast* type_kw);
 
-void check_type_compatibility(data_type a, data_type b);
+int check_type_compatibility(data_type a, data_type b);
 
 void check_functions(ast* func_list);
 void check_function(ast* func);
@@ -98,6 +98,7 @@ void check_declaration(ast* declaration) {
     m_location = declaration->location;
     symbol* id = declaration->symbol;
     ast* type_kw = declaration->children[0];
+    int err;
 
     switch (declaration->type) {
     case AST_DECL_VAR:
@@ -106,12 +107,18 @@ void check_declaration(ast* declaration) {
         ast* init = declaration->children[1];
         if (!init) {
             break;
-        }
-
-        check_type_compatibility(
+        } 
+        
+        err = check_type_compatibility(
             id->dtype,
             init->symbol->dtype
         );
+        if (err) {
+            semantic_error(
+                "can't initialize %s variable '%s' with %s literal",
+                dt_str(id->dtype), id->text, dt_str(init->symbol->dtype)
+            );
+        }
         break;
     case AST_DECL_VEC: 
         register_identifier(ID_VECTOR, id, type_kw);
@@ -128,10 +135,14 @@ void check_declaration(ast* declaration) {
         int actual = 0;
         while(vec_init) {
             actual++;
-            check_type_compatibility(
-                id->dtype,
-                vec_init->children[0]->symbol->dtype
-            );
+            data_type elem_dt = vec_init->children[0]->symbol->dtype;
+            err = check_type_compatibility(id->dtype, elem_dt);
+            if (err) {
+                semantic_error(
+                    "can't initialize %s vector '%s' with %s literal",
+                    dt_str(id->dtype), id->text, dt_str(elem_dt)
+                );
+            }
             vec_init = vec_init->children[1];
         }
         
@@ -192,26 +203,16 @@ void register_identifier(id_nature nature, symbol* identifier, ast* type_kw) {
     identifier->dtype = n2dtype(type_kw);
 }
 
-char* dt_str[] = {
-    "undefined",
-    "char",
-    "int",
-    "float"
-};
-
-void check_type_compatibility(data_type a, data_type b) {
+int check_type_compatibility(data_type a, data_type b) {
     if (
         (a == b) ||
         (a==DT_INT && b==DT_CHAR) ||
         (a==DT_CHAR && b==DT_INT)
     ) {
-        return;
+        return 0;
     }
 
-    semantic_error(
-        "type %s is not compatible with %s",
-        dt_str[a], dt_str[b]
-    );
+    return 1;
 }
 
 void check_functions(ast* func_list) {
@@ -264,6 +265,8 @@ void check_statement(ast* statement, data_type return_type) {
 
     m_location = statement->location;
     data_type dt;
+    int err;
+    symbol* id;
 
     switch (statement->type) {
     case AST_IF:
@@ -283,18 +286,32 @@ void check_statement(ast* statement, data_type return_type) {
 
     // commands
     case AST_ASSIGN:
-        check_identifier_usage(statement->symbol, ID_SCALAR);
+        id = statement->symbol;
+        check_identifier_usage(id, ID_SCALAR);
         dt = check_expression(statement->children[0]);
-        check_type_compatibility(statement->symbol->dtype, dt);
+        err = check_type_compatibility(id->dtype, dt);
+        if (err) {
+            semantic_error(
+                "can't assign %s expression to %s variable '%s'",
+                dt_str(dt), dt_str(id->dtype), id->text
+            );
+        }
         break;
     case AST_VECASSIGN:
-        check_identifier_usage(statement->symbol, ID_VECTOR);
+        id = statement->symbol;
+        check_identifier_usage(id, ID_VECTOR);
         if (check_expression(statement->children[0]) != DT_INT) {
             semantic_error("vector index must be an integer");
         }
         
-        dt = check_expression(statement->children[0]);
-        check_type_compatibility(statement->symbol->dtype, dt);
+        dt = check_expression(statement->children[1]);
+        err = check_type_compatibility(id->dtype, dt);
+        if (err) {
+            semantic_error(
+                "can't assign %s expression to %s vector '%s'",
+                dt_str(dt), dt_str(id->dtype), id->text
+            );
+        }
         break;
 
     case AST_PRINT:
@@ -305,17 +322,14 @@ void check_statement(ast* statement, data_type return_type) {
         check_expression(arg);
         break;
     case AST_RETURN:
-        check_type_compatibility(
-            return_type,
-            check_expression(statement->children[0])
-        );
-        // TODO: custom error message
-        // if (dt != return_type) {
-        //     semantic_error(
-        //         "expected %s as return type but got %s",
-        //         dt_str[return_type], dt_str[dt]
-        //     );
-        // }
+        dt = check_expression(statement->children[0]);
+        err = check_type_compatibility(return_type, dt);
+        if (err) {
+            semantic_error(
+                "expected %s as return type but got %s",
+                dt_str(return_type), dt_str(dt)
+            );
+        }
         break;
     case AST_SCOPE:
         ast* stmt_list = statement->children[0];
@@ -332,13 +346,6 @@ void check_statement(ast* statement, data_type return_type) {
     }
 }
 
-char* nature_str[] = {
-    "undefined",
-    "scalar",
-    "vector",
-    "function"
-};
-
 int check_identifier_usage(symbol* id, id_nature nature) {
     if (id->nature == ID_UNDEFINED) {
         semantic_error("identifier '%s' undefined", id->text);
@@ -348,7 +355,7 @@ int check_identifier_usage(symbol* id, id_nature nature) {
     if (id->nature != nature) {
         semantic_error(
             "'%s' (%s) is not a %s identifier",
-            id->text, nature_str[id->nature], nature_str[nature]
+            id->text, nature_str(id->nature), nature_str(nature)
         );
         return 2;
     }
@@ -358,6 +365,7 @@ int check_identifier_usage(symbol* id, id_nature nature) {
 
 data_type check_expression(ast* expr) {
     m_location = expr->location;
+    int err;
 
     switch (expr->type) {
     case AST_SYMBOL:
@@ -392,7 +400,14 @@ data_type check_expression(ast* expr) {
         data_type dt1, dt2;
         dt1 = check_expression(expr->children[0]);
         dt2 = check_expression(expr->children[1]);
-        check_type_compatibility(dt1, dt2);
+        err = check_type_compatibility(dt1, dt2);
+        if (err) {
+            semantic_error(
+                "incompatible types %s and %s in binary operation",
+                dt_str(dt1), dt_str(dt2)
+            );
+            return DT_UNDEFINED;
+        }
         return dt1;
 
     case AST_FUNCCALL:
@@ -430,11 +445,19 @@ void check_arguments(symbol* func_id, ast* arg_list) {
 
     int np = 0; // number of parameters
     int na = 0; // number of arguments
+    int err;
+    data_type param_dt, arg_dt;
     while (param_list && arg_list) {
-        check_type_compatibility(
-            param_list->symbol->dtype,
-            check_expression(arg_list->children[0])
-        );
+        param_dt = param_list->symbol->dtype;
+        arg_dt = check_expression(arg_list->children[0]);
+        err = check_type_compatibility(param_dt, arg_dt);
+        if (err) {
+            semantic_error(
+                "%s parameter '%s' of function '%s' can't receive %s expression",
+                dt_str(param_dt), param_list->symbol->text,
+                func_id->text, dt_str(arg_dt)
+            );
+        }
 
         param_list = param_list->children[1];
         arg_list = arg_list->children[1];

@@ -9,7 +9,7 @@ code main {
     print fib(1,2);
     print sum(1,2);
     print sum(1.0);
-    print succ(1);
+    print succ(3.4);
 }
 
 code fib;

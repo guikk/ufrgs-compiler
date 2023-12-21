@@ -76,3 +76,29 @@ void print_symbol_table(void){
         }
     }
 }
+
+char* nature_str(id_nature nature) {
+    switch (nature) {
+    case ID_UNDEFINED:
+    return "undefined";
+    case ID_SCALAR:
+        return "scalar";
+    case ID_VECTOR:
+        return "vector";
+    case ID_FUNC:
+        return "function";
+    }
+}
+
+char* dt_str(data_type dt) {
+    switch (dt) {
+    case DT_UNDEFINED: 
+        return "undefined";
+    case DT_CHAR: 
+        return "char";
+    case DT_INT: 
+        return "int";
+    case DT_FLOAT: 
+        return "float";
+    }
+}

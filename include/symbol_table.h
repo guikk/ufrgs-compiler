@@ -46,4 +46,7 @@ symbol* get_symbol(char *text);
 void init_symbol_table(void);
 void print_symbol_table(void);
 
+char* nature_str(id_nature nature);
+char* dt_str(data_type dt);
+
 #endif
