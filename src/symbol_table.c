@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol_table.h"
+#include "main.h"
 
 symbol* m_symbol_table[HASH_SIZE];
 
@@ -88,6 +89,8 @@ char* nature_str(id_nature nature) {
     case ID_FUNC:
         return "function";
     }
+    fprintf(stderr,"Unknown nature %d\n", nature);
+    exit(ERR_INTERNAL);
 }
 
 char* dt_str(data_type dt) {
@@ -101,4 +104,6 @@ char* dt_str(data_type dt) {
     case DT_FLOAT: 
         return "float";
     }
+    fprintf(stderr,"Unknown data type %d\n", dt);
+    exit(ERR_INTERNAL);
 }
