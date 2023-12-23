@@ -159,6 +159,7 @@ expr : TK_IDENTIFIER                     {$$=ast_new(AST_SYMBOL,$1,0,0,0,getLine
 	 | expr '|' expr                     {$$=ast_new(AST_OR,0,$1,$3,0,getLineNumber());}
 	 | '~' expr                          {$$=ast_new(AST_NOT,0,$2,0,0,getLineNumber());}
 	 | TK_IDENTIFIER '(' arg_list ')'    {$$=ast_new(AST_FUNCCALL,$1,$3,0,0,getLineNumber());}
+	 | TK_IDENTIFIER '(' ')'             {$$=ast_new(AST_FUNCCALL,$1,0,0,0,getLineNumber());}
 	 | KW_INPUT '(' type ')'             {$$=ast_new(AST_INPUT,0,$3,0,0,getLineNumber());}
 	 ;
 
