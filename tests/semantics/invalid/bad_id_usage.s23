@@ -4,13 +4,13 @@ int c();
 
 code a {
     a[0] = 0;
-    print a(1);
+    print a();
 }
 
 code b {
     b = 0;
     b = 0;
-    print b(1);
+    print b();
 }
 
 code c {
@@ -21,5 +21,5 @@ code c {
 code d {
     d = 0;
     d[0] = 0;
-    print d(1);
+    print d();
 }
