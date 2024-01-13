@@ -13,6 +13,7 @@ float f1 = 2.5;
 int v1[100];
 int v2[10] 'a' 0 'b' 0 0 0 0 0 0 0;
 
+// function declarations
 int main();
 float func(int arg1, char arg2, float arg3);
 
@@ -21,11 +22,28 @@ float func(int arg1, char arg2, float arg3);
 \\\
 
 code main {
-
+    print "Hello World!";
+    print input(char);
+    {}
+    ;
+    {
+        c1 = c2;
+        c1 = 'c';
+        v1[0] = v2[0];
+        i1 = 3 + 2 * 2 + (5-1)/2;
+    }
+    if (i1 < i2 | i1 > i2 & i1 != i2);
+    while (i1>=i2 & i1<=i1 & ~(i1==i2)) {
+        i1 = i1 + 1;
+    }
 }
 
 code func {
-
+    if (arg1 >= arg2) {
+        return arg3;
+    } else {
+        return -1.0 * arg3;
+    }
 }
 
 // end of file

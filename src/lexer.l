@@ -56,7 +56,7 @@ return     {return KW_RETURN;}
 					return TK_IDENTIFIER;
 				}
 
-{number}\.{digit}+ 	{
+-?{number}\.{digit}+ 	{
 						yylval.symbol = add_symbol(SYMBOL_LIT_FLOAT, yytext);
 						return LIT_FLOAT;
 					}
