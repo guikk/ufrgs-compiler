@@ -11,6 +11,8 @@
 #include "main.h"
 #include "ast.h"
 
+void semantic_error(char* message, ...);
+
 void check_declarations(ast* decl_list);
 void check_declaration(ast* declaration);
 void register_identifier(id_nature nature, symbol* identifier, ast* type_kw);
@@ -51,9 +53,11 @@ void semantic_analysis(ast* program) {
     check_missing_implementations(declarations);
 
     if (m_error_count > 0) {  
-        fprintf(stderr,"%s: found %d error(s)\n", get_input_filename(), m_error_count);
+        fprintf(stderr,"\033[0;31m%s: found %d error(s)\n\033[0m", get_input_filename(), m_error_count);
         exit(ERR_SEMANTICS);
     }
+
+    fprintf(stderr,"\033[0;32m%s: no semantic errors found :)\n\033[0m", get_input_filename());
 }
 
 /*
@@ -264,6 +268,7 @@ void check_statement(ast* statement, data_type return_type) {
     }
 
     m_location = statement->location;
+    ast* arg;
     data_type dt;
     int err;
     symbol* id;
@@ -315,7 +320,7 @@ void check_statement(ast* statement, data_type return_type) {
         break;
 
     case AST_PRINT:
-        ast* arg = statement->children[0];
+        arg = statement->children[0];
         if (arg->type == AST_SYMBOL && arg->symbol->stype == SYMBOL_LIT_STRING) {
             break;
         }
@@ -332,10 +337,10 @@ void check_statement(ast* statement, data_type return_type) {
         }
         break;
     case AST_SCOPE:
-        ast* stmt_list = statement->children[0];
-        while(stmt_list) {
-            check_statement(stmt_list->children[0], return_type);
-            stmt_list = stmt_list->children[1];
+        arg = statement->children[0];
+        while(arg) {
+            check_statement(arg->children[0], return_type);
+            arg = arg->children[1];
         }
         break;
     case AST_EMPTYCMD:
@@ -366,6 +371,7 @@ int check_identifier_usage(symbol* id, id_nature nature) {
 data_type check_expression(ast* expr) {
     m_location = expr->location;
     int err;
+    data_type dt1, dt2;
 
     switch (expr->type) {
     case AST_SYMBOL:
@@ -397,7 +403,6 @@ data_type check_expression(ast* expr) {
     case AST_DIF:
     case AST_AND:
     case AST_OR:
-        data_type dt1, dt2;
         dt1 = check_expression(expr->children[0]);
         dt2 = check_expression(expr->children[1]);
         err = check_type_compatibility(dt1, dt2);

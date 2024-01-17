@@ -4,7 +4,7 @@
 # Guilherme Klein Kern
 #
 
-CC = gcc
+CC = clang
 CFLAGS = -Wall -Wextra -Iinclude -g
 PHASE_NUM=4
 
