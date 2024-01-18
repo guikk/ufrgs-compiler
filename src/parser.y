@@ -47,10 +47,10 @@
 
 %token TOKEN_ERROR
 
-%left '*' '/'
 %left '+' '-'
-%left OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
-%left '<' '>' '&' '|' '~'
+%left '*' '/'
+%left '&' '|'
+%left '~' '<' '>' OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
 
 %type<tree> program
 %type<tree> type
