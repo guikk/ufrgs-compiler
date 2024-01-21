@@ -6,11 +6,11 @@
 
 CC = clang
 CFLAGS = -Wall -Wextra -Iinclude -g
-PHASE_NUM=4
+PHASE_NUM=5
 
 all: lexer parser build
 
-build: src/main.o src/symbol_table.o src/ast.o src/semantics.o src/lex.yy.o src/y.tab.o
+build: src/main.o src/symbol_table.o src/ast.o src/semantics.o src/tac.o src/lex.yy.o src/y.tab.o
 	@echo "Building executable 'etapa$(PHASE_NUM)'"
 	@$(CC) $(CFLAGS) -o etapa$(PHASE_NUM) $^
 	@mkdir -p input output

@@ -1,5 +1,5 @@
 /*
- * Etapa 4 - symbol_table.c
+ * Etapa 5 - symbol_table.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -106,4 +106,18 @@ char* dt_str(data_type dt) {
     }
     fprintf(stderr,"Unknown data type %d\n", dt);
     exit(ERR_INTERNAL);
+}
+
+symbol* symbol_create_temp() {
+    static int temp_count = 0;
+    char temp_name[14];
+    sprintf(temp_name, "temp__%d__", temp_count++);
+    return add_symbol(SYMBOL_IDENTIFIER, temp_name);
+}
+
+symbol* symbol_create_label() {
+    static int label_count = 0;
+    char label_name[14];
+    sprintf(label_name, "label__%d__", label_count++);
+    return add_symbol(SYMBOL_IDENTIFIER, label_name);
 }

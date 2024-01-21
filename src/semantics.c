@@ -1,5 +1,5 @@
 /*
- * Etapa 4 - semantics.c
+ * Etapa 5 - semantics.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -172,20 +172,6 @@ void check_declaration(ast* declaration) {
         break;
     default:
         fprintf(stderr,"Error: not a declaration\n");
-        exit(ERR_INTERNAL);
-    }
-}
-
-data_type n2dtype(ast* type_node) {
-    switch (type_node->type) {
-    case AST_INT_T:
-        return DT_INT;
-    case AST_CHAR_T:
-        return DT_CHAR;
-    case AST_FLOAT_T:
-        return DT_FLOAT;
-    default:
-        fprintf(stderr,"Error: not a valid type node\n");
         exit(ERR_INTERNAL);
     }
 }
@@ -445,8 +431,6 @@ ast* fetch_function_declaration(symbol* func_id) {
 
 void check_arguments(symbol* func_id, ast* arg_list) {
     ast* param_list = fetch_function_declaration(func_id)->children[1];
-
-    m_location = arg_list->location;
 
     int np = 0; // number of parameters
     int na = 0; // number of arguments

@@ -42,7 +42,7 @@ code func {
     if (arg1 >= arg2) {
         return arg3;
     } else {
-        return -1.0 * arg3;
+        return (0.0-1.0) * arg3;
     }
 }
 

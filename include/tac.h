@@ -11,12 +11,34 @@
 #include "symbol_table.h"
 
 typedef enum {
-    TAC_NOP,
     TAC_SYMBOL,
+    TAC_MOVE,
     TAC_ADD,
     TAC_SUB,
     TAC_MUL,
-    TAC_DIV
+    TAC_DIV,
+    TAC_LT,
+    TAC_GT,
+    TAC_GE,
+    TAC_LE,
+    TAC_EQ,
+    TAC_DIF,
+    TAC_AND,
+    TAC_OR,
+    TAC_NOT,
+    TAC_LABEL,
+    TAC_BEGINFUN,
+    TAC_ENDFUN,
+    TAC_IFZ,
+    TAC_JUMP,
+    TAC_CALL,
+    TAC_ARGPUSH,
+    TAC_RET,
+    TAC_PRINT,
+    TAC_INPUT,
+    TAC_NOP,
+    TAC_VECSET,
+    TAC_VECGET
 } opcode;
 
 typedef struct tac_node {

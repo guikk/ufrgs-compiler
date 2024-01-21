@@ -73,4 +73,6 @@ void ast_print(ast* root);
 
 void ast_decompile(ast* root, char* filename);
 
+data_type n2dtype(ast* type_node);
+
 #endif

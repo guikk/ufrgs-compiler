@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "ast.h"
+#include "main.h"
 
 char* ast_type_name[] = {
     "AST_PROGRAM",
@@ -318,4 +319,18 @@ void ast_decompile(ast* root, char* filename) {
     }
     _ast_decompile(root, fd);
     close(fd);
+}
+
+data_type n2dtype(ast* type_node) {
+    switch (type_node->type) {
+    case AST_INT_T:
+        return DT_INT;
+    case AST_CHAR_T:
+        return DT_CHAR;
+    case AST_FLOAT_T:
+        return DT_FLOAT;
+    default:
+        fprintf(stderr,"Error: not a valid type node\n");
+        exit(ERR_INTERNAL);
+    }
 }

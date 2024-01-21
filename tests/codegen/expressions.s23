@@ -1,0 +1,35 @@
+int v[1] 0;
+
+int i = 0;
+int fibvec[6] 0 1 99 99 99 99;
+int INT_MAX = 99;
+
+int main();
+int fib(int n);
+int printvec();
+
+code main {
+    v[0] = fib(5);
+    v[0] = printvec();
+    return 0;
+}
+
+code fib {
+    if (fibvec[n-1] != INT_MAX) {
+        return fibvec[n-1];
+    }
+
+    i = 2;
+    while (i < n) {
+        if (fibvec[i] == INT_MAX) {
+            fibvec[i] = fibvec[i-1] + fibvec[i-2];
+        }
+        i = i + 1;
+    }
+
+    return fibvec[n-1];
+}
+
+code printvec {
+    print v[0];
+}

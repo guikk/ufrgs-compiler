@@ -2,7 +2,7 @@
 #define SYMBOL_TABLE_H
 
 /*
- * Etapa 4 - symbol_table.h
+ * Etapa 5 - symbol_table.h
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -48,5 +48,8 @@ void print_symbol_table(void);
 
 char* nature_str(id_nature nature);
 char* dt_str(data_type dt);
+
+symbol* symbol_create_temp();
+symbol* symbol_create_label();
 
 #endif

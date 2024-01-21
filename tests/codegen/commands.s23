@@ -1,0 +1,12 @@
+int x = 0;
+int v[1] 0;
+
+int main();
+
+code main {
+    x = 1;
+    v[0] = 2;
+    print x;
+    return 0;
+    ;
+}

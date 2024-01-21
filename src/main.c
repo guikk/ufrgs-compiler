@@ -1,5 +1,5 @@
 /*
- * Etapa 4 - main.c
+ * Etapa 5 - main.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -10,6 +10,7 @@
 #include "symbol_table.h"
 #include "ast.h"
 #include "semantics.h"
+#include "tac.h"
 
 extern ast* get_parsed_ast();
 
@@ -31,11 +32,9 @@ int main(int argc, char** argv) {
 	initMe();
 	
 	yyparse();
-
 	// print_symbol_table();
 
 	ast* parsed = get_parsed_ast();
-
 	// ast_print(parsed);
 
 	if (argc == 3) {
@@ -43,6 +42,9 @@ int main(int argc, char** argv) {
 	}
 
 	semantic_analysis(parsed);
+
+	tac* tac_list = generate_tac_list(parsed);
+	print_tac_list(tac_list);
 
 	exit(0);
 }
