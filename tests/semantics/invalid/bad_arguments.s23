@@ -3,6 +3,7 @@ int main ();
 int fib(int n);
 float sum(float a, float b);
 char succ(char ch);
+int nop();
 
 code main {
     print fib(1.0);
@@ -10,8 +11,10 @@ code main {
     print sum(1,2);
     print sum(1.0);
     print succ(3.4);
+    print nop(1);
 }
 
 code fib;
 code sum;
 code succ;
+code nop;
