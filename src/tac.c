@@ -32,7 +32,7 @@ char* opcode_str[] = {
     "TAC_IFZ",
     "TAC_JUMP",
     "TAC_CALL",
-    "TAC_ARGPUSH",
+    "TAC_ARG",
     "TAC_RET",
     "TAC_PRINT",
     "TAC_INPUT",
@@ -197,7 +197,7 @@ tac* tac_create(ast* tree) {
 
     // Special cases
     case AST_ARG_L: // arg list is reversed so it can be used as a stack
-        return tac_join_n(3, c[1], c[0], tac_new(TAC_ARGPUSH, c[0]->result, NULL, NULL));
+        return tac_join_n(3, c[1], c[0], tac_new(TAC_ARG, c[0]->result, NULL, NULL));
 
     case AST_PROGRAM:
         return tac_join(c[0], c[1]);

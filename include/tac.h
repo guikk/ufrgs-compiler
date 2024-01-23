@@ -32,7 +32,7 @@ typedef enum {
     TAC_IFZ,
     TAC_JUMP,
     TAC_CALL,
-    TAC_ARGPUSH,
+    TAC_ARG,
     TAC_RET,
     TAC_PRINT,
     TAC_INPUT,
