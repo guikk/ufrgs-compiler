@@ -10,8 +10,7 @@ int printvec();
 
 code main {
     v[0] = fib(5);
-    v[0] = printvec();
-    return 0;
+    return printvec();
 }
 
 code fib {
