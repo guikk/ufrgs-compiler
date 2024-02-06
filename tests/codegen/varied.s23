@@ -1,0 +1,59 @@
+int main();
+int i = 5;
+
+float f = 1.1;
+float g = 3.3;
+
+int v[5] 1 11 111 1111 11111;
+char c[10] 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j';
+
+int p(int n);
+
+code main {
+    // if (0) {
+    //     print "True\n";
+    // } else {
+    //     print "False\n";
+    // }
+    
+    // print "Entre um inteiro: ";
+    // i = input(int);
+    // while (i > 0) {
+    //     print i;
+    //     i = i - 1;
+    // }
+
+    // print 1 & 1;
+    // print 1 & 0;
+    // print 0 & 1;
+    // print 0 & 0;
+    // print 1 | 1;
+    // print 0 | 1;
+    // print 1 | 0;
+    // print 0 | 0;
+    // print ~1;
+    // print ~0;
+    // print "Hello World\n";
+    // print "Hello World2\n";
+    // print "Hello World1\n";
+    
+    // i = 'x';
+    // print i;
+    
+    print "How many letters?\n> ";
+    return p(input(int));
+}
+
+code p {
+    i = 0;
+    while (i < n) {
+        if (i >= 10) {
+            print "Index out of range ";
+            print i;
+            return 1;
+        }
+        print c[i];
+        i = i + 1;
+    }
+    return 0;
+}
