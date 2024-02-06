@@ -334,9 +334,16 @@ void asm_gen_tac(FILE* out, tac* t) {
         fprintf(out, "    leaq .scan_%s, %%rdi\n", dt_str(t->result->dtype));
         fprintf(out, "    call __isoc99_scanf@PLT\n");
         break;
-    // case TAC_VECSET:
-    // case TAC_VECGET:
-    
+    case TAC_VECSET:
+        fprintf(out, "    movl _%s, %%eax\n", t->arg2->text); // index in eax
+        fprintf(out, "    movl _%s, %%edx\n", t->arg1->text); // value in edx
+        fprintf(out, "    movl %%edx, _%s(,%%eax,4)\n", t->result->text); // store value in vector
+        break;
+    case TAC_VECGET:
+        fprintf(out, "    movl _%s, %%eax\n", t->arg2->text); // index in eax
+        fprintf(out, "    movl _%s(,%%eax,4), %%eax\n", t->arg1->text); // get value from vector and store in eax
+        fprintf(out, "    movl %%eax, _%s\n", t->result->text); // store value in result
+        break;
     default:
         break;
     }

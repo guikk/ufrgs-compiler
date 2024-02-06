@@ -1,7 +1,7 @@
 int v[1] 0;
 
 int i = 0;
-int fibvec[6] 0 1 99 99 99 99;
+int fibvec[10] 0 1 99 99 99 99 99 99 99 99;
 int INT_MAX = 99;
 
 int main();
@@ -9,7 +9,7 @@ int fib(int n);
 int printvec();
 
 code main {
-    v[0] = fib(5);
+    v[0] = fib(10);
     return printvec();
 }
 
@@ -26,9 +26,13 @@ code fib {
         i = i + 1;
     }
 
-    return fibvec[n-1];
+    return 0;
 }
 
 code printvec {
-    print v[0];
+    i = 0;
+    while (i < 10) {
+        print fibvec[i];
+        i = i + 1;
+    }
 }
