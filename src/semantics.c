@@ -1,14 +1,16 @@
 /*
- * Etapa 5 - semantics.c
+ * semantics.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
 
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "semantics.h"
 #include "main.h"
+#include "errors.h"
 #include "ast.h"
 
 void semantic_error(char* message, ...);

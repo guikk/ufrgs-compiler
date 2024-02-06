@@ -1,5 +1,5 @@
 /*
- * Etapa 4 - ast.c
+ * ast.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "ast.h"
-#include "main.h"
+#include "errors.h"
 
 char* ast_type_name[] = {
     "AST_PROGRAM",

@@ -1,13 +1,14 @@
 %{
 	#include <stdlib.h>
 	#include "main.h"
+	#include "errors.h"
 	#include "symbol_table.h"
 	#include "ast.h"
 	int yyerror();
 	int yylex();
 	extern int getLineNumber();
 /*
- * Etapa 4 - parser.y
+ * parser.y
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -196,6 +197,6 @@ int yyerror(char *err){
 	exit(ERR_BAD_SYNTAX);
 }
 
-ast* get_parsed_ast() {
+ast* get_parsed_ast(void) {
     return root;
 }

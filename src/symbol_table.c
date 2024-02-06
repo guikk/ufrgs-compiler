@@ -1,5 +1,5 @@
 /*
- * Etapa 5 - symbol_table.c
+ * symbol_table.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -8,9 +8,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol_table.h"
-#include "main.h"
+#include "errors.h"
 
 symbol* m_symbol_table[HASH_SIZE];
+
+int hash(char *text);
+
+symbol** get_symbol_table() {
+    return m_symbol_table;
+}
 
 void init_symbol_table(void) {
     for(int i = 0; i < HASH_SIZE; i++) {
@@ -108,16 +114,19 @@ char* dt_str(data_type dt) {
     exit(ERR_INTERNAL);
 }
 
-symbol* symbol_create_temp() {
+symbol* symbol_create_temp(data_type dt) {
     static int temp_count = 0;
     char temp_name[14];
+    symbol* temp;
     sprintf(temp_name, "temp__%d__", temp_count++);
-    return add_symbol(SYMBOL_IDENTIFIER, temp_name);
+    temp = add_symbol(SYMBOL_TEMP, temp_name);
+    temp->dtype = dt;
+    return temp;
 }
 
 symbol* symbol_create_label() {
     static int label_count = 0;
     char label_name[14];
     sprintf(label_name, "label__%d__", label_count++);
-    return add_symbol(SYMBOL_IDENTIFIER, label_name);
+    return add_symbol(SYMBOL_LABEL, label_name);
 }

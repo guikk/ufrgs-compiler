@@ -2,7 +2,7 @@
 #define SYMBOL_TABLE_H
 
 /*
- * Etapa 5 - symbol_table.h
+ * symbol_table.h
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
@@ -14,7 +14,9 @@ typedef enum {
     SYMBOL_LIT_FLOAT,
     SYMBOL_LIT_CHAR,
     SYMBOL_LIT_STRING,
-    SYMBOL_IDENTIFIER
+    SYMBOL_IDENTIFIER,
+    SYMBOL_TEMP,
+    SYMBOL_LABEL,
 } symbol_type;
 
 typedef enum {
@@ -38,9 +40,10 @@ typedef struct symbol_node{
     char* text;
     struct symbol_node* next;
     int is_implemented;
+    int str_index;
 } symbol;
 
-int hash(char *text);
+symbol** get_symbol_table();
 symbol* add_symbol(symbol_type type, char* text);
 symbol* get_symbol(char *text);
 void init_symbol_table(void);
@@ -49,7 +52,7 @@ void print_symbol_table(void);
 char* nature_str(id_nature nature);
 char* dt_str(data_type dt);
 
-symbol* symbol_create_temp();
+symbol* symbol_create_temp(data_type dt);
 symbol* symbol_create_label();
 
 #endif

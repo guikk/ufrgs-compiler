@@ -1,11 +1,12 @@
 /*
- * Etapa 5 - tac.c
+ * tac.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
 
 #include "tac.h"
 #include "main.h"
+#include "errors.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -41,7 +42,6 @@ char* opcode_str[] = {
     "TAC_VECGET"
 };
 
-void tac_print(tac* code);
 tac* tac_new(opcode op, symbol* arg1, symbol* arg2, symbol* result);
 tac* tac_create(ast* node);
 tac* tac_first(tac* tac_list);
@@ -53,16 +53,6 @@ tac* tac_while(tac* cond, tac* loop_code);
 tac* tac_ifelse(tac* cond, tac* then_code, tac* else_code);
 tac* tac_input(ast* input);
 
-
-void print_tac_list(tac* tac_list) {
-    tac* current = tac_first(tac_list);
-
-    while (current != NULL) {
-        tac_print(current);
-        current = current->next;
-    }
-}
-
 tac* generate_tac_list(ast* program) {
     tac* tac_list;
     tac_list = tac_create(program);
@@ -71,25 +61,30 @@ tac* generate_tac_list(ast* program) {
         exit(ERR_INTERNAL);
     }
     fprintf(stderr,"\033[0;32m%s: tac generated successfully :)\n\033[0m", get_input_filename());
-    return tac_list;
+    return tac_first(tac_list);
+}
+
+void print_tac_list(tac* tac_list) {
+    for (tac* current = tac_list; current != NULL; current = current->next) {
+        if (current->op == TAC_SYMBOL) {
+            continue;
+        }
+        tac_fprint(stderr, current);
+    }
+}
+
+void tac_fprint(FILE* file, tac* code) {
+    fprintf(file, "%s(", opcode_str[code->op]);
+    if (code->arg1 != NULL) fprintf(file, "%s", code->arg1->text);
+    if (code->arg2 != NULL) fprintf(file, ", %s", code->arg2->text);
+    fprintf(file, ")");
+    if (code->result != NULL)
+        fprintf(file, " -> %s\n", code->result->text);
+    else
+        fprintf(file, "\n");
 }
 
 ////////////////////////////////////////////////////////////////////////
-
-void tac_print(tac* code) {
-    if (code->op == TAC_SYMBOL) {
-        return;
-    }
-
-    fprintf(stderr, "%s(", opcode_str[code->op]);
-    if (code->arg1 != NULL) fprintf(stderr, "%s", code->arg1->text);
-    if (code->arg2 != NULL) fprintf(stderr, ", %s", code->arg2->text);
-    fprintf(stderr, ")");
-    if (code->result != NULL)
-        fprintf(stderr, " -> %s\n", code->result->text);
-    else
-        fprintf(stderr, "\n");
-}
 
 tac* tac_new(opcode op, symbol* arg1, symbol* arg2, symbol* result) {
     tac* tac_node = (tac*) malloc(sizeof(tac));
@@ -99,7 +94,6 @@ tac* tac_new(opcode op, symbol* arg1, symbol* arg2, symbol* result) {
     tac_node->result = result;
     tac_node->prev = NULL;
     tac_node->next = NULL;
-    // tac_print(tac_node);
     return tac_node;
 }
 
@@ -157,14 +151,14 @@ tac* tac_create(ast* tree) {
             TAC_VECGET,
             tree->symbol,
             c[0]->result,
-            symbol_create_temp()
+            symbol_create_temp(tree->symbol->dtype)
         ));
     case AST_FUNCCALL:
         return tac_join(c[0], tac_new(
             TAC_CALL,
             tree->symbol,
             NULL,
-            symbol_create_temp()
+            symbol_create_temp(tree->symbol->dtype)
         ));
 
     // Binary operations
@@ -265,7 +259,7 @@ tac* tac_join(tac* tac1, tac* tac2) {
 }
 
 tac* tac_binop(opcode op, tac* arg1, tac* arg2) {
-    symbol* result = symbol_create_temp();
+    symbol* result = symbol_create_temp(arg1->result->dtype);
     return tac_join_n(3,
         arg1,
         arg2,
@@ -316,7 +310,6 @@ tac* tac_ifelse(tac* cond, tac* then_code, tac* else_code) {
 }
 
 tac* tac_input(ast* input) {
-    symbol* temp = symbol_create_temp();
-    temp->dtype = n2dtype(input->children[0]);
+    symbol* temp = symbol_create_temp(n2dtype(input->children[0]));
     return tac_new(TAC_INPUT, NULL, NULL, temp);
 }

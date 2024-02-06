@@ -2,10 +2,12 @@
 #define TAC_H
 
 /*
- * Etapa 5 - tac.h
+ * tac.h
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
+
+#include <stdio.h>
 
 #include "ast.h"
 #include "symbol_table.h"
@@ -52,5 +54,6 @@ typedef struct tac_node {
 
 tac* generate_tac_list(ast* program);
 void print_tac_list(tac* tac_list);
+void tac_fprint(FILE* file, tac* code);
 
 #endif

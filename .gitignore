@@ -53,3 +53,10 @@ dkms.conf
 
 # VSCode config files
 .vscode
+
+# generated files
+etapa*
+y.output
+y.tab.*
+lex.yy.*
+output/*

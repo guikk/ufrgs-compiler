@@ -4,12 +4,11 @@
 #include "y.tab.h"
 
 /*
-* Etapa 4 - lexer.l
+* lexer.l
 * INF-UFRGS - INF01147 Compiladores - 2023/2
 * Guilherme Klein Kern
 */
 
-int m_is_running = 1;
 int m_curr_line = 1;
 %}
 
@@ -93,12 +92,7 @@ int getLineNumber(void) {
 	return m_curr_line;
 }
 
-int isRunning(void) {
-	return m_is_running;
-}
-
 int yywrap() {
-    m_is_running = 0;
     return 1;
 }
 

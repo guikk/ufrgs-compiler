@@ -1,16 +1,18 @@
 #
-# Etapa 4 - Makefile
+# Makefile
 # INF-UFRGS - INF01147 Compiladores - 2023/2
 # Guilherme Klein Kern
 #
 
+SHELL=/bin/bash -O globstar
+
 CC = clang
 CFLAGS = -Wall -Wextra -Iinclude -g
-PHASE_NUM=5
+PHASE_NUM=6
 
 all: lexer parser build
 
-build: src/main.o src/symbol_table.o src/ast.o src/semantics.o src/tac.o src/lex.yy.o src/y.tab.o
+build: src/main.o src/symbol_table.o src/ast.o src/semantics.o src/tac.o src/asm.o src/lex.yy.o src/y.tab.o
 	@echo "Building executable 'etapa$(PHASE_NUM)'"
 	@$(CC) $(CFLAGS) -o etapa$(PHASE_NUM) $^
 	@mkdir -p input output
@@ -32,13 +34,10 @@ parser:
 	@mv y.tab.c src/
 
 compile:
-	@./etapa$(PHASE_NUM) $(target) $(out)
+	@./etapa$(PHASE_NUM) $(target)
 
-test_decompile:
-	@./etapa$(PHASE_NUM) input/$(target) output/$(target) > /dev/null 2>&1
-	@./etapa$(PHASE_NUM) output/$(target) output/copy-$(target) > /dev/null 2>&1
-	@diff output/$(target) output/copy-$(target) && echo "PASS :D" || echo "FAIL! :/"
-
+run:
+	@gcc $(target) -no-pie -o $(target:.s=.out) && ./$(target:.s=.out)
 
 clean:
-	@rm -f src/*.o etapa* */lex.yy.* */y.tab.* y.output output/*
+	@rm -f etapa* */lex.yy.* */y.* y.output output/* **/*.s **/*.o **/*.out

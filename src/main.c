@@ -1,20 +1,33 @@
 /*
- * Etapa 5 - main.c
+ * main.c
  * INF-UFRGS - INF01147 Compiladores - 2023/2
  * Guilherme Klein Kern
  */
 
-#include <stdio.h>
 #include "main.h"
-#include "lex.yy.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "errors.h"
 #include "symbol_table.h"
 #include "ast.h"
 #include "semantics.h"
 #include "tac.h"
+#include "asm.h"
 
-extern ast* get_parsed_ast();
+// lexer
+// int yylex();
+extern FILE *yyin;
+
+// parser
+extern int yyparse();
+extern ast* get_parsed_ast(void);
 
 char* input_path;
+
+char* replace_ext(char* filename, char* new_ext);
 
 int main(int argc, char** argv) {
 
@@ -43,12 +56,29 @@ int main(int argc, char** argv) {
 
 	semantic_analysis(parsed);
 
-	tac* tac_list = generate_tac_list(parsed);
-	print_tac_list(tac_list);
+	ast* declarations = parsed->children[0];
+	ast* functions = parsed->children[1];
+
+	tac* tac_list = generate_tac_list(functions);
+	// print_tac_list(tac_list);
+
+	generate_asm(declarations, tac_list, replace_ext(input_path, ".s"));
 
 	exit(0);
 }
 
 char* get_input_filename(void) {
 	return input_path;
+}
+
+char* replace_ext(char* filename, char* new_ext) {
+	char* dot = strrchr(filename, '.');
+	if (dot == NULL) {
+		return NULL;
+	}
+
+	char* new_filename = (char*) malloc(strlen(filename) + strlen(new_ext) + 1);
+	strncpy(new_filename, filename, dot - filename);
+	strcpy(new_filename + (dot - filename), new_ext);
+	return new_filename;
 }
